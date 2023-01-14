@@ -1,0 +1,77 @@
+dataset: subj
+templates:
+  07f344c1-8ece-4bad-969e-a731a798bdb9: !Template
+    answer_choices: objective ||| subjective
+    id: 07f344c1-8ece-4bad-969e-a731a798bdb9
+    jinja: 'Sentence: {{text}}
+
+      Label: ||| {{ answer_choices[label] }}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: false
+      concate_str: ' '
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: MSRA Prompt 3
+    reference: gyx
+  6ca81ef2-56c5-4621-a780-849fca30f55e: !Template
+    answer_choices: Objective ||| Subjective
+    id: 6ca81ef2-56c5-4621-a780-849fca30f55e
+    jinja: 'Input: {{text}}
+
+      Type: ||| {{ answer_choices[label] }}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: false
+      concate_str: ' '
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: MSRA Prompt 4
+    reference: gyx
+  b104cdd3-49aa-4f8a-8661-0ffaec8871ea: !Template
+    answer_choices: objective ||| subjective
+    id: b104cdd3-49aa-4f8a-8661-0ffaec8871ea
+    jinja: '{{text}}
+
+      It is ||| {{ answer_choices[label] }}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: false
+      concate_str: ' '
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: MSRA Prompt 5
+    reference: gyx
+  c8cbb02b-24bb-440b-8a84-97c1a571091f: !Template
+    answer_choices: objective ||| subjective
+    id: c8cbb02b-24bb-440b-8a84-97c1a571091f
+    jinja: 'Input: {{text}}
+
+      Label: ||| {{ answer_choices[label] }}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: false
+      concate_str: ' '
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: MSRA Prompt 2
+    reference: gyx
+  e0377e79-94bf-4e6f-8b7b-b393437f0466: !Template
+    answer_choices: objective ||| subjective
+    id: e0377e79-94bf-4e6f-8b7b-b393437f0466
+    jinja: 'Input: {{text}}
+
+      Type: ||| {{ answer_choices[label] }}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: false
+      concate_str: ' '
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: MSRA Prompt
+    reference: gyx

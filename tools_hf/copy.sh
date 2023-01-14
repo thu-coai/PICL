@@ -1,0 +1,1 @@
+cp /home/guyuxian/datasets/datasets/${1}/${1}.py /home/guyuxian/PPT/tools_hf_2
