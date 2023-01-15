@@ -4,6 +4,7 @@ import math
 import pickle
 import numpy as np
 import torch
+import math
 
 from utils import save_rank, print_rank, get_rank, barrier
 
@@ -188,7 +189,7 @@ class ICLDataset(BaseDataset):
             if balance and DATA_CONFIG[data_name].finit_label(prompt_name):
                 demo_idxs = []
                 for l in pool_l:
-                    demo_idxs.extend(self.rng_sample.sample(pool_l[l], k=int(shot / len(pool_l))))
+                    demo_idxs.extend(self.rng_sample.sample(pool_l[l], k=math.ceil(shot / len(pool_l))))
             else:
                 demo_idxs = self.rng_sample.sample(pool_sid, k=shot)
             repeat_times += 1

@@ -49,8 +49,6 @@ class BaseDataset(Dataset):
         self.delimiter_id = {
             "<n>": 198,
             "<eos>": 50256,
-            "2<n>": 628,
-            "optn": 50118
         }[args.end_token]
         self.data_names = self._get_data_names(args.data_names)
         self.data_prompts, self.data_prompt_names = self._get_data_prompts(self.data_names)
@@ -147,7 +145,7 @@ class BaseDataset(Dataset):
         num = self.args.icl_pool_num if self.as_pool else self.num
         prompt_name = prompt_name.replace("/", "-")
         prompt_type = "" if self.args.prompt_type is None else self.args.prompt_type
-        end = {"<n>": "", "<eos>": "eod", "2<n>": "2n", "optn": "optn"}[self.args.end_token]
+        end = {"<n>": "", "<eos>": "eod"}[self.args.end_token]
         bos = "" if not self.args.add_bos else "bos"
         balance = "balance" if (self.split != "train" and self.args.balance_eval) else ""
         r2s = "r2s" if self.args.replace_return_with_space else ""

@@ -14,26 +14,25 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
-CKPT_NAME=${4-"gpt2-large"}
-# CKPT_NAME="pretrain/mixed/general_full_256_SEARCH1_r2s_15M/lm_data_full_stuffed_rr_1.01.0/vanilla/all_target/chunk-1/pos0_nn/shot16/lr1e-06-bs1-G8-N16-wm1000/len256-1024-None/gpt2-large/10-10-42/70000"
-CKPT="${BASE_PATH}/icl_train/results/${CKPT_NAME}/"
+CKPT_NAME=${7-"gpt2-large"}
+CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
-DATA_NAMES="NI"
-DATA_DIR="${BASE_PATH}/nat_inst_1/natural-instructions/tasks/"
+DATA_NAMES="EVAL"
+DATA_DIR="${BASE_PATH}/data/"
 # hp
-EVAL_BATCH_SIZE=4
+EVAL_BATCH_SIZE=8
 # length
 MAX_LENGTH=1024
 MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
-SAVE_PATH="${BASE_PATH}/icl_train/results/meta_icl/infer_ni_fix/"
+SAVE_PATH="${BASE_PATH}/results/eval/cls"
 # seed
-SEED=10
-SEED_ORDER=10
+SEED=${4-10}
+SEED_ORDER=${5-10}
 # icl
 TYPE="vanilla"
-SHOT=0
+SHOT=${6-4}
 
 
 OPTS=""
@@ -45,15 +44,15 @@ OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --data-names ${DATA_NAMES}"
+OPTS+=" --prompt-type origin"
 OPTS+=" --num-workers 2"
+OPTS+=" --dev-num 1000"
 OPTS+=" --balance-eval"
-OPTS+=" --ni-ref-file /home/lidong1/CodeRepo/icl_train/test_references.jsonl"
-OPTS+=" --force-process"
+# OPTS+=" --force-process"
 # OPTS+=" --force-process-demo"
 OPTS+=" --data-process-workers -1"
 OPTS+=" --trim"
 OPTS+=" --replace-return-with-space"
-OPTS+=" --end-token nn"
 # hp
 OPTS+=" --eval-batch-size ${EVAL_BATCH_SIZE}"
 # length
@@ -61,7 +60,6 @@ OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE}"
 OPTS+=" --max-length-all-demos ${MAX_LENGTH_ALL_DEMOS}"
 # runtime
-OPTS+=" --do-eval"
 OPTS+=" --save ${SAVE_PATH}"
 # seed
 OPTS+=" --seed ${SEED}"
@@ -69,17 +67,17 @@ OPTS+=" --seed-order ${SEED_ORDER}"
 OPTS+=" --reset-seed-each-data"
 # deepspeed
 OPTS+=" --deepspeed"
-OPTS+=" --deepspeed_config ${BASE_PATH}/icl_train/configs/deepspeed/ds_config.json"
+OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # icl
 OPTS+=" --shot ${SHOT}"
+OPTS+=" --icl-share-demo"
+OPTS+=" --icl-balance"
 OPTS+=" --type ${TYPE}"
-# OPTS+=" --train-prompts Simple_Prompt_2"
-# OPTS+=" --eval-prompts Simple_Prompt_2"
 
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONIOENCODING=utf-8
 export PYTHONPATH=${BASE_PATH}
-CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/icl_train/evaluate_nat_inst.py ${OPTS} $@"
+CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/evaluate_cls.py ${OPTS} $@"
 
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"
