@@ -15,30 +15,30 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 # model
 BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
 CKPT_NAME="gpt2-large"
-CKPT="${BASE_PATH}/icl_train/results/${CKPT_NAME}/"
+CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
-DATA_PREFIX="${4-"general/10M_256/256/roberta-base/HR/pos1_easy_neg1_hard_neg1_seed42_concate32/bs64_32_lr0.00005_G1_SEED/4000.pt/l2_h5/res_-1/r2s<n>/"}"
-LM_DATA_PREFIX="${5-"lm_data/1024/stuffed/rr<n>/"}"
-DATA_DIR="${BASE_PATH}/icl_train/unsup_data/${DATA_PREFIX}"
-LM_DATA_DIR="${BASE_PATH}/icl_train/unsup_data/${LM_DATA_PREFIX}"
+DATA_PREFIX="${4-"general/full_256/SEARCH1/r2s/"}"
+LM_DATA_PREFIX="${5-"lm_data/full/stuffed/rr/"}"
+DATA_DIR="${BASE_PATH}/pretrain_data/${DATA_PREFIX}"
+LM_DATA_DIR="${BASE_PATH}/pretrain_data/${LM_DATA_PREFIX}"
 # hp
-BATCH_SIZE=2
-LR=0.00001
+BATCH_SIZE=1
+LR=0.000001
 LR_DECAY="noam"
-GRAD_ACC=16
+GRAD_ACC=8
 # length
 MAX_LENGTH=1024
 MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
-SAVE_PATH="${BASE_PATH}/icl_train/results/pretrain/"
+SAVE_PATH="${BASE_PATH}/results/pretrain/"
 # seed
 SEED=10
 SEED_ORDER=10
 # icl
 TYPE="vanilla"
 ICL_SUP=all_target
-EVAL_BATCH_SIZE=32
+EVAL_BATCH_SIZE=16
 SHOT=16
 
 
@@ -56,15 +56,19 @@ OPTS+=" --unsup-data-name tokenized"
 OPTS+=" --unsup-data-prefix ${DATA_PREFIX}"
 OPTS+=" --lm-data-prefix ${LM_DATA_PREFIX}"
 OPTS+=" --lm-ratio 1"
-OPTS+=" --lm-only"
+OPTS+=" --end-lm-ratio 1"
 OPTS+=" --num-workers 4"
-OPTS+=" --dev-ratio 0.1"
+OPTS+=" --dev-ratio 0.5"
+OPTS+=" --train-num 15000000"
+OPTS+=" --pretrain-type mixed"
+OPTS+=" --unsup-fast"
+OPTS+=" --end-token nn"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"
 OPTS+=" --eval-batch-size ${EVAL_BATCH_SIZE}"
 OPTS+=" --gradient-accumulation-steps ${GRAD_ACC}"
-OPTS+=" --warmup-iters 0"
+OPTS+=" --warmup-iters 1000"
 OPTS+=" --lr-decay-style ${LR_DECAY}"
 OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
@@ -87,16 +91,16 @@ OPTS+=" --seed ${SEED}"
 OPTS+=" --seed-order ${SEED_ORDER}"
 # deepspeed
 OPTS+=" --deepspeed"
-OPTS+=" --deepspeed_config ${BASE_PATH}/icl_train/configs/deepspeed/ds_config.json"
+OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # icl
 OPTS+=" --type ${TYPE}"
 OPTS+=" --shot ${SHOT}"
 OPTS+=" --icl-sup ${ICL_SUP}"
 # OPTS+=" --attn-dtype float"
 
-
+export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONPATH=${BASE_PATH}
-CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/icl_train/pretrain_gpt2_few_ds.py ${OPTS} $@"
+CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/pretrain.py ${OPTS} $@"
 
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"

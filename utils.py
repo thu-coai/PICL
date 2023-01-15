@@ -1,14 +1,15 @@
+
+import os
+import random
+
+import numpy as np
 from collections import defaultdict
 from typing import Dict
-import numpy as np
-import os
-import torch.distributed as dist
-from torch.distributed import get_rank
-from torch.distributed import barrier
 
-import torch.nn as nn
-import random
 import torch
+import torch.nn as nn
+import torch.distributed as dist
+from torch.distributed import get_rank, barrier
 
 
 def print_args(args):

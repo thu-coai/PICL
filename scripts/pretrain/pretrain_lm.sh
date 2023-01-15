@@ -14,28 +14,30 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
-CKPT_NAME="gpt2-xl"
-CKPT="${BASE_PATH}/icl_train/results/${CKPT_NAME}/"
+CKPT_NAME="gpt2-large"
+CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
-DATA_PREFIX="${4-"general/para_corpus_10M_uniq_shuf/256/ret_split_w_label/bs64_lr0.00005_G1_SEED10/5411.pt/l2_h5/full/res_-1_filtered/"}"
-DATA_DIR="${BASE_PATH}/icl_train/unsup_data/${DATA_PREFIX}"
+DATA_PREFIX="${4-"general/10M_256/256/roberta-base/HR/pos1_easy_neg1_hard_neg1_seed42_concate32/bs64_32_lr0.00005_G1_SEED/4000.pt/l2_h5/res_-1/r2s<n>/"}"
+LM_DATA_PREFIX="${5-"lm_data/1024/stuffed/rr<n>/"}"
+DATA_DIR="${BASE_PATH}/pretrain_data/${DATA_PREFIX}"
+LM_DATA_DIR="${BASE_PATH}/pretrain_data/${LM_DATA_PREFIX}"
 # hp
-BATCH_SIZE=1
-LR=0.00005
+BATCH_SIZE=2
+LR=0.00001
 LR_DECAY="noam"
-GRAD_ACC=64
+GRAD_ACC=16
 # length
 MAX_LENGTH=1024
 MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
-SAVE_PATH="${BASE_PATH}/icl_train/results/pretrain/"
+SAVE_PATH="${BASE_PATH}/results/pretrain/"
 # seed
 SEED=10
 SEED_ORDER=10
 # icl
 TYPE="vanilla"
-ICL_SUP=test_target
+ICL_SUP=all_target
 EVAL_BATCH_SIZE=32
 SHOT=16
 
@@ -49,8 +51,12 @@ OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # OPTS+=" --gradient-checkpointing"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
+OPTS+=" --lm-data-dir ${LM_DATA_DIR}"
 OPTS+=" --unsup-data-name tokenized"
 OPTS+=" --unsup-data-prefix ${DATA_PREFIX}"
+OPTS+=" --lm-data-prefix ${LM_DATA_PREFIX}"
+OPTS+=" --lm-ratio 1"
+OPTS+=" --lm-only"
 OPTS+=" --num-workers 4"
 OPTS+=" --dev-ratio 0.1"
 # hp
@@ -71,6 +77,7 @@ OPTS+=" --max-length-all-demos ${MAX_LENGTH_ALL_DEMOS}"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
+# OPTS+=" --do-eval"
 OPTS+=" --save-interval 1000"
 OPTS+=" --eval-interval 1000"
 OPTS+=" --log-interval 1"
