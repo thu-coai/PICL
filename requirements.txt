@@ -1,0 +1,4 @@
+deepspeed==0.7.7
+torch==1.12.1
+t5
+numerize
