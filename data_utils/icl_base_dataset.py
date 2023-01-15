@@ -1,4 +1,3 @@
-from torch.utils.data import Dataset
 import random
 from collections import defaultdict
 import os
@@ -6,15 +5,11 @@ import re
 from promptsource.templates import TemplateCollection
 from datasets import load_dataset
 import pickle
-import numpy as np
 import multiprocessing
 from functools import partial
 
-from icl_train.utils import save_rank_hf as save_rank
-from icl_train.utils import print_rank_hf as print_rank
-from torch.distributed import get_rank
-from torch.distributed import barrier
-
+from utils import save_rank, print_rank, get_rank, barrier
+from torch.utils.data import Dataset
 
 from .data_config import DATA_GROUP_CONFIG, DATA_CONFIG
 from collections import defaultdict

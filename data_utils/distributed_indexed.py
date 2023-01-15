@@ -15,20 +15,13 @@
 
 import os
 import struct
-import shutil
 
 from itertools import accumulate
 
 import numpy as np
 import torch
 import torch.distributed as dist
-# if os.environ.get("CODE_BASE", "BMT") == "HF":
-#     import torch.distributed as dist
-#     def print_rank(*args, rank=0, **kwargs):
-#         if dist.get_rank() == rank:
-#             print(*args, **kwargs)
-# else:
-#     from bmtrain import print_rank
+
 
 dtypes = {
     1: np.uint8,

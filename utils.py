@@ -20,13 +20,13 @@ def print_args(args):
         print('  {} {} {}'.format(arg, dots, getattr(args, arg)), flush=True)
 
 
-def save_rank_hf(log_str, save_path, rank=0):
+def save_rank(log_str, save_path, rank=0):
     if not dist.is_initialized() or dist.get_rank() == rank:
         with open(save_path, "a") as f:
             f.write(log_str + "\n")
 
 
-def print_rank_hf(*args, rank=0, **kwargs):
+def print_rank(*args, rank=0, **kwargs):
     if not dist.is_initialized() or dist.get_rank() == rank:
         print(*args, **kwargs)
 

@@ -4,17 +4,8 @@ import math
 import pickle
 import numpy as np
 import torch
-from copy import deepcopy
 
-from icl_train.utils import print_args
-
-if os.environ.get("CODE_BASE", "BMT") == "HF":
-    from icl_train.utils import save_rank_hf as save_rank
-    from icl_train.utils import print_rank_hf as print_rank
-    from torch.distributed import get_rank, barrier
-else:
-    from icl_train.utils import save_rank_bmt as save_rank
-    from icl_train.utils import print_rank_bmt as print_rank
+from utils import save_rank, print_rank, get_rank, barrier
 
 from .icl_base_dataset import BaseDataset
 from .data_config import DATA_CONFIG

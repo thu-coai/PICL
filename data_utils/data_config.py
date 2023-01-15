@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 import os
-from typing import Optional, Union
 from t5.evaluation import metrics
 
 BASE_DATA_DIR = "data"
