@@ -300,10 +300,6 @@ dmypy.json
 
 .vscode/
 pretrain_data/
-small_data/
-large_data/
-raw_data/
-unsup_data
 checkpoints/
 results
 results_new
@@ -321,7 +317,6 @@ data
 *.pt
 *.pkl
 
-pretrain_data_raw/
 data_log
 debug
 checkpoints
@@ -330,13 +325,7 @@ playground
 
 logs
 debug.sh
-results_remote
 
-small_filter_data
-results_1
-meta_icl_results
-unsup_data_1
-unsup_data_2
-unsup_data_test
 pretrain_data
 apex
+retriever_data

@@ -13,7 +13,7 @@ import json
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from arguments import get_args
+from arguments import get_picl_eval_args
 
 from data_utils.train_dataset import ICLTrainDataset
 from data_utils.evaluation_datasets import ICLEvalCLSDataset 
@@ -27,13 +27,13 @@ torch.set_num_threads(4)
 
 
 def get_tokenizer(args):
-    tokenizer = AutoTokenizer.from_pretrained(args.model_config)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_dir)
     
     return tokenizer
 
 
 def get_model(args, device):
-    model = AutoModelForCausalLM.from_pretrained(args.model_config)
+    model = AutoModelForCausalLM.from_pretrained(args.model_dir)
     if args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
     return model
@@ -78,7 +78,7 @@ def init_distributed(args):
 
 def initialize():
     # get arguments
-    args = get_args()
+    args = get_picl_eval_args()
     # init bmt 
     init_distributed(args)
     set_random_seed(args.seed)
@@ -172,7 +172,7 @@ def evaluate(args, tokenizer, model, dataset: ICLEvalCLSDataset, epoch, device):
     with torch.no_grad():
         for it, (model_batch, no_model_batch) in enumerate(tqdm(dataloader, desc=f"Evaluating {dataset.data_name} {dataset.prompt_name}", disable=(dist.get_rank() != 0))):
             dataset.move_to_device(model_batch, no_model_batch, device)
-            outputs = model(**model_batch, output_attentions=args.output_attentions)
+            outputs = model(**model_batch)
             logits = outputs.logits
             losses = loss_func(logits.float().view(-1, logits.shape[-1]), no_model_batch["label"].view(-1))
             preds, min_loss, gold_loss, gold_tot_loss, option_losses = process_loss(
@@ -255,13 +255,7 @@ def main():
     with open(args.deepspeed_config, "r") as f:
         ds_config = json.load(f)
 
-    ds_config["gradient_accumulation_steps"] = args.gradient_accumulation_steps
-    ds_config["train_micro_batch_size_per_gpu"] = args.batch_size
-    ds_config["gradient_clipping"] = args.clip_grad
-    ds_config["steps_per_print"] = args.gradient_accumulation_steps
-    
-    if not args.do_train:
-        ds_config["zero_optimization"]["stage"] = 0
+    ds_config["zero_optimization"]["stage"] = 0
     
     # get the tokenizer
     tokenizer = get_tokenizer(args)

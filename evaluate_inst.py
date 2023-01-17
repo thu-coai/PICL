@@ -10,7 +10,7 @@ import json
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from arguments import get_args
+from arguments import get_picl_eval_args
 
 from utils import get_rank, set_random_seed, print_args, print_rank, save_rank
 from tqdm import tqdm
@@ -24,13 +24,13 @@ torch.set_num_threads(4)
 
 
 def get_tokenizer(args):
-    tokenizer = AutoTokenizer.from_pretrained(args.model_config)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_dir)
     
     return tokenizer
 
 
 def get_model(args, device):
-    model = AutoModelForCausalLM.from_pretrained(args.model_config)
+    model = AutoModelForCausalLM.from_pretrained(args.model_dir)
     if args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
     return model
@@ -42,7 +42,7 @@ def setup_model_and_optimizer(args, ds_config, device, set_optim=True):
     # get the optimizer and lr_scheduler
     optimizer, lr_scheduler = None, None
         
-    model, optimizer, _, lr_scheduler = deepspeed.initialize(
+    model, _, _, _ = deepspeed.initialize(
         model=model,
         optimizer=optimizer,
         args=args,
@@ -52,7 +52,7 @@ def setup_model_and_optimizer(args, ds_config, device, set_optim=True):
     
     # get the memory usage
     print_rank("Model mem\n", torch.cuda.memory_summary())
-    return model, optimizer, lr_scheduler
+    return model
 
 
 def init_distributed(args):
@@ -74,7 +74,7 @@ def init_distributed(args):
 
 def initialize():
     # get arguments
-    args = get_args()
+    args = get_picl_eval_args()
     # init bmt 
     init_distributed(args)
     set_random_seed(args.seed)
@@ -101,7 +101,7 @@ def evaluate_gen(args, tokenizer: AutoTokenizer, model: AutoModelForCausalLM, da
         for it, (model_batch, no_model_batch) in enumerate(tqdm(dataloader, desc=f"Evaluating {dataset.data_name} YN No", disable=(dist.get_rank() != 0))):
             dataset.move_to_device(model_batch, no_model_batch, device)
                         
-            outputs = model(**model_batch, output_attentions=False)
+            outputs = model(**model_batch)
             logits = outputs.logits
             losses = loss_func(logits.float().view(-1, logits.shape[-1]), no_model_batch["label"].view(-1))
             losses = losses.view(*no_model_batch["loss_mask"].size())
@@ -198,7 +198,7 @@ def evaluate_yn(args, tokenizer: AutoTokenizer, model: AutoModelForCausalLM, dat
     with torch.no_grad():
         for it, (model_batch, no_model_batch) in enumerate(tqdm(dataloader, desc=f"Evaluating {dataset.data_name} YN Yes", disable=(dist.get_rank() != 0))):
             dataset.move_to_device(model_batch, no_model_batch, device)
-            outputs = model(**model_batch, output_attentions=args.output_attentions)
+            outputs = model(**model_batch)
             logits = outputs.logits
             losses = loss_func(logits.float().view(-1, logits.shape[-1]), no_model_batch["label"].view(-1))
             preds, min_loss, gold_loss, gold_tot_loss, option_losses = process_loss(
@@ -279,20 +279,17 @@ def main():
     with open(args.deepspeed_config, "r") as f:
         ds_config = json.load(f)
 
-    ds_config["gradient_accumulation_steps"] = args.gradient_accumulation_steps
-    ds_config["train_micro_batch_size_per_gpu"] = args.batch_size
-    ds_config["gradient_clipping"] = args.clip_grad
-    ds_config["steps_per_print"] = args.gradient_accumulation_steps
+    ds_config["zero_optimization"]["stage"] = 0
     
     # get the tokenizer
     tokenizer = get_tokenizer(args)
     
     dataset = ICLEvalSNIDataset(args, tokenizer, args.data_dir)
     
-    model, optimizer, lr_scheduler = setup_model_and_optimizer(args, ds_config, device, set_optim=args.do_train)
+    model = setup_model_and_optimizer(args, ds_config, device, set_optim=args.do_train)
         
     evaluate_all(args, tokenizer, model, dataset, "test", 0, device)
-    compute_score(args.ni_ref_file, args.save)
+    compute_score(args.sni_ref_file, args.save)
 
 
 if __name__ == "__main__":

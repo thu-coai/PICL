@@ -23,7 +23,6 @@ DATA_DIR="${BASE_PATH}/data/"
 EVAL_BATCH_SIZE=8
 # length
 MAX_LENGTH=1024
-MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
 SAVE_PATH="${BASE_PATH}/results/eval/cls"
@@ -31,34 +30,29 @@ SAVE_PATH="${BASE_PATH}/results/eval/cls"
 SEED=${4-10}
 SEED_ORDER=${5-10}
 # icl
-TYPE="vanilla"
 SHOT=${6-4}
 
 
 OPTS=""
 # model
 OPTS+=" --base-path ${BASE_PATH}"
-OPTS+=" --model-config ${CKPT}"
+OPTS+=" --model-dir ${CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --data-names ${DATA_NAMES}"
-OPTS+=" --prompt-type origin"
 OPTS+=" --num-workers 2"
 OPTS+=" --dev-num 1000"
 OPTS+=" --balance-eval"
 # OPTS+=" --force-process"
 # OPTS+=" --force-process-demo"
 OPTS+=" --data-process-workers -1"
-OPTS+=" --trim"
-OPTS+=" --replace-return-with-space"
 # hp
 OPTS+=" --eval-batch-size ${EVAL_BATCH_SIZE}"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE}"
-OPTS+=" --max-length-all-demos ${MAX_LENGTH_ALL_DEMOS}"
 # runtime
 OPTS+=" --save ${SAVE_PATH}"
 # seed
@@ -72,7 +66,6 @@ OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 OPTS+=" --shot ${SHOT}"
 OPTS+=" --icl-share-demo"
 OPTS+=" --icl-balance"
-OPTS+=" --type ${TYPE}"
 
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONIOENCODING=utf-8

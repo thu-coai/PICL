@@ -17,9 +17,11 @@ BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
 CKPT_NAME="gpt2-large"
 CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
-DATA_PREFIX="${4-"general/full_256/SEARCH1/r2s/"}"
-LM_DATA_PREFIX="${5-"lm_data/full/stuffed/rr/"}"
-DATA_DIR="${BASE_PATH}/pretrain_data/${DATA_PREFIX}"
+CORPUS="100K_128"
+DATA_PREFIX="picl/${CORPUS}_TRAIN_p1_en1_hn4_s42_lr5e-05-bs64-G1_4000.pt_L2_filtered_0.0"
+LM_DATA_PREFIX="full_doc/${CORPUS}"
+DATA_DIR="${BASE_PATH}/pretrain_data/raw/${CORPUS}"
+IDX_DATA_DIR="${BASE_PATH}/pretrain_data/${DATA_PREFIX}"
 LM_DATA_DIR="${BASE_PATH}/pretrain_data/${LM_DATA_PREFIX}"
 # hp
 BATCH_SIZE=1
@@ -28,7 +30,6 @@ LR_DECAY="noam"
 GRAD_ACC=8
 # length
 MAX_LENGTH=1024
-MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
 SAVE_PATH="${BASE_PATH}/results/pretrain/"
@@ -45,24 +46,23 @@ SHOT=16
 OPTS=""
 # model
 OPTS+=" --base-path ${BASE_PATH}"
-OPTS+=" --model-config ${CKPT}"
+OPTS+=" --model-dir ${CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # OPTS+=" --gradient-checkpointing"
 # data
-OPTS+=" --data-dir ${DATA_DIR}"
+OPTS+=" --picl-data-dir ${DATA_DIR}"
+OPTS+=" --picl-idx-data-dir ${IDX_DATA_DIR}"
+OPTS+=" --picl-data-name picl"
+OPTS+=" --picl-data-prefix ${DATA_PREFIX}"
 OPTS+=" --lm-data-dir ${LM_DATA_DIR}"
-OPTS+=" --unsup-data-name tokenized"
-OPTS+=" --unsup-data-prefix ${DATA_PREFIX}"
+OPTS+=" --lm-data-name lm"
 OPTS+=" --lm-data-prefix ${LM_DATA_PREFIX}"
 OPTS+=" --lm-ratio 1"
-OPTS+=" --end-lm-ratio 1"
 OPTS+=" --num-workers 4"
 OPTS+=" --dev-ratio 0.5"
 OPTS+=" --train-num 15000000"
 OPTS+=" --pretrain-type mixed"
-OPTS+=" --unsup-fast"
-OPTS+=" --end-token nn"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"
@@ -77,7 +77,6 @@ OPTS+=" --epochs 1"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE}"
-OPTS+=" --max-length-all-demos ${MAX_LENGTH_ALL_DEMOS}"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
@@ -93,10 +92,9 @@ OPTS+=" --seed-order ${SEED_ORDER}"
 OPTS+=" --deepspeed"
 OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # icl
-OPTS+=" --type ${TYPE}"
 OPTS+=" --shot ${SHOT}"
 OPTS+=" --icl-sup ${ICL_SUP}"
-# OPTS+=" --attn-dtype float"
+
 
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONPATH=${BASE_PATH}

@@ -11,7 +11,7 @@ import numpy as np
 
 class RetrieverModel(nn.Module):
     def __init__(self, model_dir, vocab_size, share_model=False, pool_type="cls"):
-        super(DPRModel, self).__init__()
+        super(RetrieverModel, self).__init__()
         self.query_encoder = RobertaModel.from_pretrained(model_dir)
         self.share_model = share_model
         self.pool_type = pool_type

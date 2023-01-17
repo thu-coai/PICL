@@ -2,40 +2,37 @@
 
 WORKING_DIR=${1-"/home/guyuxian/dpr-simple"}
 
-NUM_GPUS_PER_WORKER=${2-2} # number of gpus used on one node
+NUM_GPUS_PER_WORKER=${2-4} # number of gpus used on one node
 
 MASTER_PORT=${3-2012}
 
 # model
-MODEL_NAME="roberta-base"
-MODEL_DIR="${WORKING_DIR}/checkpoints/${MODEL_NAME}/"
+MODEL_DIR="${WORKING_DIR}/checkpoints/roberta-base/"
 # data
-DATA_DIR="${WORKING_DIR}/pretrain_data/"
-DATA_NAME=${5-"general/full_256"}
-SEARCH=${6-SEARCH1}
+DATA_DIR="${WORKING_DIR}/pretrain_data/raw"
+DATA_NAME=${5-"100K_128"}
 # hp
 BATCH_SIZE=128
 SEED=10
 MAX_LEN=256
 # runtime
-CKPT=${4-"HR/pos1_easy_neg1_hard_neg1_seed42_concate32/bs64_32_lr0.00005_G1_SEED/4000.pt"}
+CKPT=${4-"TRAIN_p1_en1_hn4_s42/lr5e-05-bs64-G1/4000.pt"}
 LOAD_PATH="${WORKING_DIR}/results/retriever/${CKPT}"
-SAVE_PATH="${WORKING_DIR}/results/retriever/${DATA_NAME}/${SEARCH}/"
+SAVE_PATH="${WORKING_DIR}/pretrain_data/retrieval_results/"
 
 
 OPTS=""
 # model
-OPTS+=" --model_dir ${MODEL_DIR}"
-OPTS+=" --model_name ${MODEL_NAME}"
-OPTS+=" --share_model"
-OPTS+=" --data_name ${DATA_NAME}"
+OPTS+=" --model-dir ${MODEL_DIR}"
+OPTS+=" --ckpt-name ${CKPT}"
+OPTS+=" --share-model"
+OPTS+=" --data-names ${DATA_NAME}"
 # data
-OPTS+=" --data_dir ${DATA_DIR}"
-OPTS+=" --load_data_workers 32"
-OPTS+=" --search_chunk 1000000000"
+OPTS+=" --data-dir ${DATA_DIR}"
+OPTS+=" --num-workers 32"
 # hp
-OPTS+=" --batch_size ${BATCH_SIZE}"
-OPTS+=" --max_len ${MAX_LEN}"
+OPTS+=" --batch-size ${BATCH_SIZE}"
+OPTS+=" --max-length ${MAX_LEN}"
 # runtime
 OPTS+=" --do-infer"
 OPTS+=" --load ${LOAD_PATH}"

@@ -41,15 +41,11 @@ class BaseDataset(Dataset):
         self.ratio = ratio
         self.gpt_max_length = args.gpt_max_length
         self.max_length = args.max_length
-        self.max_length_all_demos = args.max_length_all_demos
         self.max_length_per_sample = args.max_length_per_sample
         self.rng_sample = rng_sample
         self.rng_order = rng_order
         self.cur_epoch = 0
-        self.delimiter_id = {
-            "<n>": 198,
-            "<eos>": 50256,
-        }[args.end_token]
+        self.delimiter_id = 198
         self.data_names = self._get_data_names(args.data_names)
         self.data_prompts, self.data_prompt_names = self._get_data_prompts(self.data_names)
         self.all_data = self._load_data(self.data_prompt_names)
@@ -144,12 +140,12 @@ class BaseDataset(Dataset):
         data_dir = os.path.join(self.args.base_path, DATA_CONFIG[data_name].data_dir)
         num = self.args.icl_pool_num if self.as_pool else self.num
         prompt_name = prompt_name.replace("/", "-")
-        prompt_type = "" if self.args.prompt_type is None else self.args.prompt_type
-        end = {"<n>": "", "<eos>": "eod"}[self.args.end_token]
-        bos = "" if not self.args.add_bos else "bos"
+        prompt_type = "origin"
+        end = ""
+        bos = ""
         balance = "balance" if (self.split != "train" and self.args.balance_eval) else ""
-        r2s = "r2s" if self.args.replace_return_with_space else ""
-        trim = "trim" if self.args.trim else ""
+        r2s = "r2s"
+        trim = "trim"
         
         cache_path = os.path.join(data_dir, f"icl_new_cache/{self.split}/{self.ratio}/{num}/{balance}/{self.max_length_per_sample}/{self.args.seed_data}/{prompt_name}/{prompt_type}/{end}/{bos}/{r2s}/{trim}")
         return cache_path
@@ -295,16 +291,11 @@ class BaseDataset(Dataset):
         context_str = context_str.strip()
         target_str = getattr(prompt.metadata, "concate_str", " ") + target_str.strip()
 
-        if self.args.trim:
-            context_str = re.sub("\n+", "\n", context_str)
-            target_str = re.sub("\n+", "\n", target_str)
-
-        if self.args.replace_return_with_space:
-            context_str = re.sub("\s+", " ", context_str)
-            target_str = re.sub("\s+", " ", target_str)
+        context_str = re.sub("\n+", "\n", context_str)
+        target_str = re.sub("\n+", "\n", target_str)
+        context_str = re.sub("\s+", " ", context_str)
+        target_str = re.sub("\s+", " ", target_str)
         
-        # target_str = target_str + ("\n" if self.args.end_token == "<n>" else "")
-
         if len(context_str) + len(target_str) > 5000:
             return None
         
@@ -326,9 +317,7 @@ class BaseDataset(Dataset):
         options_ids, option_label_id = None, None
         if split != "train" and DATA_CONFIG[dn].task_type == "cls":
             options_str = [getattr(prompt.metadata, "concate_str", " ") + x.strip() for x in options_str]
-            if self.args.replace_return_with_space:
-                options_str = [re.sub("\s+", " ", x) for x in options_str]
-            # options_str = [x + ("\n" if self.args.end_token == "<n>" else "") for x in options_str]
+            options_str = [re.sub("\s+", " ", x) for x in options_str]
             
             options_ids = [tokenizer.encode(option_str, add_special_tokens=False) + [self.delimiter_id] for option_str in options_str]
 

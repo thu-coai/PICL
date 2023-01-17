@@ -3,27 +3,25 @@ import time
 import random
 import faiss
 import h5py
-import json
 import numpy as np
-from numerize import numerize
-from time import time, sleep
 from tqdm import tqdm
+from datetime import timedelta
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader
+import torch.distributed as dist
+from torch.utils.data import DataLoader, DistributedSampler
 from torch.optim import AdamW
 
-from transformers import get_linear_schedule_with_warmup
-from transformers import RobertaTokenizer, RobertaModel
 
-from arguments import get_arguments
+from transformers import get_linear_schedule_with_warmup
+from transformers import RobertaTokenizer
+
+from arguments import get_retrieval_args
 
 from data_utils.indexed_dataset import make_builder
 
 from data_utils.retriever_datasets import RetrieverDataset, RetrieverInferDataset
-from modeling.retrever_modeling import RetrieverModel
+from modeling.retriever_modeling import RetrieverModel, get_optimizer_params
 
 
 def save_log(args, log_str):
@@ -62,7 +60,7 @@ def train(args, tokenizer, model, optimizer, scheduler, train_dataset, dev_datas
             loss = output["loss"]
             loss.backward()
             
-            torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad)
             optimizer.step()
             scheduler.step()
             model.zero_grad()
@@ -84,24 +82,24 @@ def train(args, tokenizer, model, optimizer, scheduler, train_dataset, dev_datas
                     elapsed_time
                 )
             
-            if total_steps % args.print_log_steps == 0:
-                log_str = get_log_str(total_loss_print / args.print_log_steps)
+            if total_steps % args.log_interval == 0:
+                log_str = get_log_str(total_loss_print / args.log_interval)
                 print(log_str)
                 print(args.save)
                 total_loss_print = 0
             
-            if total_steps % args.save_log_steps == 0:
-                log_str = get_log_str(total_loss_save / args.save_log_steps)
+            if total_steps % args.save_log_interval == 0:
+                log_str = get_log_str(total_loss_save / args.save_log_interval)
                 save_log(args, log_str)
                 total_loss_save = 0
 
-            if total_steps % args.eval_steps == 0:
+            if total_steps % args.eval_interval == 0:
                 dev_res = evaluate(args, model, tokenizer, dev_dataset, dev_dataloader, device)
                 
                 print("dev_res: ", dev_res)
                 save_log(args, "dev_res: " + str(dev_res))
 
-            if total_steps % args.save_steps == 0:
+            if total_steps % args.save_interval == 0:
                 save_path = os.path.join(args.save, "{}.pt".format(total_steps))
                 print("save to", save_path)
                 torch.save(model.state_dict(), save_path)
@@ -201,9 +199,9 @@ def search(args, device):
     with h5py.File(embed_path, "r") as f:
         embeds = f["embeds"][:]
     print("Load embeds end")
-    if args.metric_type == "inner_prod":
+    if args.metric_type == "IP":
         cpu_index = faiss.IndexFlatIP(dim)
-    elif args.metric_type == "l2":
+    elif args.metric_type == "L2":
         cpu_index = faiss.IndexFlatL2(dim)
     else:
         raise NotImplementedError
@@ -229,8 +227,8 @@ def search(args, device):
         f.create_dataset("scores", data=np.zeros((0, 20), dtype=np.float32), maxshape=(None, None), chunks=True)
 
     print("Searching")
-    num = args.max_num if args.max_num > 0 else len(embeds)
-    bs = args.search_batch_size
+    num = args.data_num if args.data_num > 0 else len(embeds)
+    bs = args.batch_size
     for st in tqdm(range(0, num, bs)):
         ed = min(st+bs, num)
         query = embeds[st:ed]
@@ -266,15 +264,63 @@ def set_random_seed(seed):
         torch.manual_seed(seed)
 
 
-def main():
+def init_distributed(args):
+    args.rank = int(os.getenv("RANK", "0"))
+    args.world_size = int(os.getenv("WORLD_SIZE", "1"))
+    args.local_rank = int(os.getenv("LOCAL_RANK", "0"))
+
+    if args.rank == 0:
+        print(f"using world size: {args.world_size}")
+
+    # Manually set the device ids.
+    device = args.rank % torch.cuda.device_count()
+    if args.local_rank is not None:
+        device = args.local_rank
+    torch.cuda.set_device(device)
+
+    dist.init_process_group(backend="nccl", timeout=timedelta(minutes=300))
+
+
+def change_save_path(args):
+    if args.do_train:
+        save_path = os.path.join(
+            args.save,
+            args.data_names.replace("/", "_"),
+            f"lr{args.lr}-bs{args.batch_size}-G{args.gradient_accumulation_steps}",
+        )
+    elif args.do_infer:
+        save_path = os.path.join(
+            args.save,
+            args.data_names.replace("/", "_"),
+            args.ckpt_name.replace("/", "_")
+        )
+    else: # args.do_search
+        save_path = os.path.join(
+            args.save,
+            args.data_names,
+            args.metric_type
+        )
+        
+    args.save = save_path
     
-    args = get_arguments()
+    return args    
+
+
+def main():
+
+    args = get_retrieval_args()
+    args = change_save_path(args)
+    
+    if args.do_infer:
+        init_distributed(args)
     
     set_random_seed(args.seed)
     
     device = torch.cuda.current_device()
     os.makedirs(args.save, exist_ok=True)
-    
+
+    print(args.do_search)
+
     tokenizer = RobertaTokenizer.from_pretrained(args.model_dir)
     if args.do_train:
         train_dataset = RetrieverDataset(args, "train", os.path.join(args.data_dir, "train.jsonl"), tokenizer)
@@ -298,21 +344,18 @@ def main():
         optimizer = AdamW(params=get_optimizer_params(args, model), lr=args.lr, eps=1e-8)
         total_steps = (len(train_dataset) / (args.batch_size * args.gradient_accumulation_steps)) * args.epochs
         scheduler = get_linear_schedule_with_warmup(optimizer,
-                                                    num_warmup_steps=int(args.wm * total_steps),
+                                                    num_warmup_steps=int(args.warmup_iters * total_steps),
                                                     num_training_steps=total_steps)
 
-        if args.eval_steps == -1:
-            args.eval_steps = len(train_dataset) // (args.gradient_accumulation_steps * args.batch_size)
-        if args.save_steps == -1:
-            args.save_steps = len(train_dataset) // (args.gradient_accumulation_steps * args.batch_size)
+        if args.eval_interval == -1:
+            args.eval_interval = len(train_dataset) // (args.gradient_accumulation_steps * args.batch_size)
+        if args.save_interval == -1:
+            args.save_interval = len(train_dataset) // (args.gradient_accumulation_steps * args.batch_size)
 
         train(args, tokenizer, model, optimizer, scheduler, train_dataset, valid_dataset, train_dataloader, valid_dataloader, device)
     
-    if args.do_infer:
-        if dist.get_rank() == 0:
-            os.system("ln -s {} {}".format(os.path.join(args.data_dir, args.data_name, "raw.txt"), os.path.join(args.save, "raw_0")))
-            
-        infer_dataset = RetrieverInferDataset(args, "infer", os.path.join(args.data_dir, args.data_name, "raw.txt"), tokenizer)
+    if args.do_infer:            
+        infer_dataset = RetrieverInferDataset(args, "infer", os.path.join(args.data_dir, args.data_names, "processed_0"), tokenizer)
         
         model = RetrieverModel(args.model_dir, len(tokenizer), args.share_model, args.pool_type)
         if args.load is not None:

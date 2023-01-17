@@ -7,14 +7,13 @@ import time
 import multiprocessing
 from tqdm import tqdm
 import numpy as np
-from numerize import numerize
 from itertools import chain
 
 import torch
 import torch.distributed as dist
 from torch.utils.data import Dataset
 
-from transformers import BertTokenizer, RobertaTokenizer
+from transformers import RobertaTokenizer
 
 from data_utils.indexed_dataset import make_builder
 from data_utils.distributed_indexed import DistributedMMapIndexedDataset
@@ -23,7 +22,7 @@ from data_utils.distributed_indexed import DistributedMMapIndexedDataset
 class Encoder(object):
     def __init__(self, args):
         self.args = args
-        self.max_len = args.max_len
+        self.max_len = args.max_length
 
     def initializer(self,):
         # Use Encoder class as a container for global data
@@ -63,11 +62,11 @@ class RetrieverDataset(Dataset):
 
         self.args = args
         self.split = split
-        self.max_len = args.max_len
+        self.max_len = args.max_length
         self.tokenizer = tokenizer
         self.pad_id = self.tokenizer.pad_token_id
         
-        cache_dir = os.path.join(args.data_dir, split, str(self.max_len), args.model_name)
+        cache_dir = os.path.join(args.data_dir, split, str(self.max_len), args.ckpt_name)
         os.makedirs(cache_dir, exist_ok=True)
         cache_path = os.path.join(cache_dir, "cache.pkl")
         if os.path.exists(cache_path):
@@ -79,7 +78,7 @@ class RetrieverDataset(Dataset):
                 with open(cache_path, "wb") as f:
                     pickle.dump(self.data, f)
             else:
-                self.data, data_reordered = self.load_data_parallel(path, args.load_data_workers)
+                self.data, data_reordered = self.load_data_parallel(path, args.num_workers)
                 with open(cache_path, "wb") as f:
                     pickle.dump(self.data, f)
                     
@@ -218,7 +217,7 @@ class RetrieverInferDataset(Dataset):
 
         self.args = args
         self.split = split
-        self.max_len = args.max_len
+        self.max_len = args.max_length
         self.tokenizer = tokenizer
         self.pad_id = self.tokenizer.pad_token_id
 
@@ -228,11 +227,11 @@ class RetrieverInferDataset(Dataset):
                 
         if not os.path.exists(cache_ok_path):
             if dist.get_rank() == 0:
-                if args.load_data_workers <= 0:
+                if args.num_workers <= 0:
                     self.load_data(path, self.cache_dir)
                 else:
                     print("Process at rank 0")
-                    self.load_data_parallel(path, self.cache_dir, args.load_data_workers)
+                    self.load_data_parallel(path, self.cache_dir, args.num_workers)
                 with open(cache_ok_path, "w") as f:
                     f.write("OK")
             dist.barrier()
@@ -343,12 +342,6 @@ class RetrieverInferDataset(Dataset):
     def set_h5(self):
         with h5py.File(self.embeds_path, "w") as f:
             f.create_dataset("embeds", data=np.zeros((0, 768), dtype=np.float32), maxshape=(None, None), chunks=True)
-
-    def dump_npy(self, embeddings):
-        assert len(self.data) == len(embeddings)
-
-        print(f"Dumping to {self.embeds_path}, size = {len(self.data)}") 
-        np.save(self.embeds_path, embeddings)
         
     def dump_h5(self, embeddings):
         assert os.path.exists(self.embeds_path)

@@ -4,7 +4,7 @@ import os
 import argparse
 from rouge_score import rouge_scorer
 from transformers import AutoTokenizer
-from sni_tasks import NI_TASKS, ALL_NI_TASKS
+from .sni_tasks import NI_TASKS
 
 
 class GPTTokenizer:
@@ -103,7 +103,7 @@ def parse_args():
         help="Jsonl file with each line corresponding to a prediction. " 
              "Each json object should have an `id` and a `prediction` key.")
     parser.add_argument(
-        "--ref_file", default="/home/lidong1/CodeRepo/icl_train/test_references.jsonl",
+        "--ref_file", default="/home/lidong1/CodeRepo/test_references.jsonl",
         help="Jsonl file with each line corresponding to a reference. " 
              "Each json object should have an `id` and a `references` key. "
              "`task_id`, `task_category` and `task_track` are optional, which will be used to "
@@ -120,11 +120,11 @@ def compute_score(ref_file, pred_dir):
             # if track is not provided in the refernce file, we use set the track to `default` and use the default tokenizer in rouge-score.
             if "track" not in instance:
                 instance["track"] = "default"
-            if instance["task_id"] in ALL_NI_TASKS:
+            if instance["task_id"] in NI_TASKS:
                 eval_instances[instance["id"]] = instance
 
     all_predictions = {}
-    for data_name in ALL_NI_TASKS:
+    for data_name in NI_TASKS:
         path = os.path.join(pred_dir, "preds", "-1", f"{data_name}.jsonl")
         if os.path.exists(path):
             with open(path) as fin:

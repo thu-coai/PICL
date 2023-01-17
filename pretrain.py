@@ -17,41 +17,22 @@ import json
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import get_constant_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
 
-from arguments import get_args
+from arguments import get_picl_pretrain_args
 
 from data_utils.pretrain_datasets import ICLPretrainDataset
 from utils import get_optimizer_params, set_random_seed, print_args
-from utils import print_rank_hf as print_rank
-from utils import save_rank_hf as save_rank
+from utils import print_rank, save_rank
 from tqdm import tqdm
 
 
-class LMRatioScheduler():
-    def __init__(self, start_ratio, end_ratio, tot_steps):
-        self.start_ratio = start_ratio
-        self.end_ratio = end_ratio
-        self.tot_steps = tot_steps
-        self.ratio = start_ratio
-        self.steps = 0
-
-    def get_ratio(self):
-        if self.start_ratio is None:
-            return 0
-        else:
-            return (self.end_ratio - self.start_ratio) / self.tot_steps * self.steps + self.start_ratio
-
-    def step(self):
-        self.steps += 1
-
-
 def get_tokenizer(args):
-    tokenizer = AutoTokenizer.from_pretrained(args.model_config)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_dir)
     
     return tokenizer
 
 
 def get_model(args, device):
-    model = AutoModelForCausalLM.from_pretrained(args.model_config)
+    model = AutoModelForCausalLM.from_pretrained(args.model_dir)
     if args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
     return model
@@ -131,7 +112,7 @@ def init_distributed(args):
 
 def initialize():
     # get arguments
-    args = get_args()
+    args = get_picl_pretrain_args()
     # init bmt 
     init_distributed(args)
     set_random_seed(args.seed)
@@ -144,15 +125,32 @@ def initialize():
 def prepare_dataset(args, tokenizer, rank, world_size):
     data = {}
     rng_sample = random.Random(args.seed)
+
+    def _get_dataset(split, mode):
+        num = args.picl_train_num if split == "train" else args.picl_valid_num
+        lm_num = args.lm_train_num if split == "train" else args.lm_valid_num
+        _dataset = ICLPretrainDataset(
+                args,
+                tokenizer,
+                path_icl=args.picl_data_dir,
+                split=split,
+                num=num,
+                lm_num=lm_num,
+                shot=args.shot,
+                mode=mode,
+                path_lm=args.lm_data_dir,
+                path_icl_idx=args.picl_idx_data_dir,
+                rng_sample=rng_sample)
+        return _dataset
     
     if args.do_train:
         if args.pretrain_type in ["mixed", "icl"]:
-            data["train_icl"] = ICLPretrainDataset(args, tokenizer, args.data_dir, args.lm_data_dir, "train", args.train_num, args.train_lm_num, args.train_ratio, args.shot, "icl", rng_sample)
-            data["dev_icl"] = ICLPretrainDataset(args, tokenizer, args.data_dir, args.lm_data_dir, "valid", args.dev_num, args.dev_lm_num, args.dev_ratio, args.shot, "icl", rng_sample)
+            data["train_icl"] = _get_dataset("train", "icl")
+            data["dev_icl"] = _get_dataset("valid", "icl")
 
         if args.pretrain_type in ["mixed", "lm"]:
-            data["train_lm"] = ICLPretrainDataset(args, tokenizer, args.data_dir, args.lm_data_dir, "train", args.train_num, args.train_lm_num, args.train_ratio, args.shot, "lm", rng_sample)
-            data["dev_lm"] = ICLPretrainDataset(args, tokenizer, args.data_dir, args.lm_data_dir, "valid", args.dev_num, args.dev_lm_num, args.dev_ratio, args.shot, "lm", rng_sample)
+            data["train_lm"] = _get_dataset("train", "lm")
+            data["dev_lm"] = _get_dataset("valid", "lm")
 
         if args.train_iters == -1:
             if args.pretrain_type in ["mixed", "icl"]:
@@ -167,9 +165,9 @@ def prepare_dataset(args, tokenizer, rank, world_size):
     
     elif args.do_eval:
         if args.pretrain_type in ["mixed", "icl"]:
-            data["test_icl"] = ICLPretrainDataset(args, tokenizer, args.data_dir, args.lm_data_dir, "valid", args.dev_num, args.dev_lm_num, args.dev_ratio, args.shot, "icl", rng_sample)
+            data["test_icl"] = _get_dataset("valid", "icl")
         if args.pretrain_type in ["mixed", "lm"]:
-            data["test_lm"] = ICLPretrainDataset(args, tokenizer, args.data_dir, args.lm_data_dir, "valid", args.dev_num, args.dev_lm_num, args.dev_ratio, args.shot, "lm", rng_sample)
+            data["test_lm"] = _get_dataset("valid", "lm")
     else:
         raise ValueError("Do train and do eval must set one")
     return data
@@ -207,8 +205,6 @@ def pretrain(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
     step, global_step = 1, 1
     total_loss, total_loss_lm, total_time = 0.0, 0.0, 0.0
 
-    lm_ratio_scheduler = LMRatioScheduler(args.lm_ratio, args.end_lm_ratio, args.lr_decay_iters)
-
     lm_epoch = 0
     for epoch in range(args.epochs):
         sampler.set_epoch(epoch)
@@ -239,21 +235,17 @@ def pretrain(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
             torch.cuda.synchronize()
             st_time = time.time()
-
-            attn_dtype = torch.float32 if args.attn_dtype == "float" else None
             
-            outputs = model(**model_batch, attn_dtype=attn_dtype, use_cache=False)
+            outputs = model(**model_batch, use_cache=False)
             logits = outputs.logits
             loss = loss_func(logits.float().view(-1, logits.shape[-1]), no_model_batch["label"].view(-1))
             
             if args.pretrain_type == "mixed":
-                outputs_lm = model(**lm_model_batch, attn_dtype=attn_dtype, use_cache=False)
+                outputs_lm = model(**lm_model_batch, use_cache=False)
                 logits_lm = outputs_lm.logits
                 loss_lm = loss_func(logits_lm.float().view(-1, logits_lm.shape[-1]), lm_no_model_batch["label"].view(-1))
-                lm_ratio = lm_ratio_scheduler.get_ratio()
+                lm_ratio = args.lm_ratio
                 loss = (loss + lm_ratio * loss_lm) / (1 + lm_ratio)
-                if step % args.gradient_accumulation_steps == 0:
-                    lm_ratio_scheduler.step()
             
             model.backward(loss)
             model.step()
@@ -275,7 +267,7 @@ def pretrain(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
             # Logging
             def get_log(log_loss, log_lm_loss, log_time):
-                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | lm_loss: {:.4f} | lr: {:.4e} | lm ratio: {:.3f} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
+                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | lm_loss: {:.4f} | lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
                     epoch,
                     step,
                     len(train_dataloader) * args.epochs,
@@ -284,7 +276,6 @@ def pretrain(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     log_loss,
                     log_lm_loss,
                     lr_scheduler.get_last_lr()[0],
-                    lm_ratio_scheduler.get_ratio(),
                     optimizer.cur_scale,
                     elapsed_time,
                     log_time,

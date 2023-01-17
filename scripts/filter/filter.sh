@@ -14,23 +14,20 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
-CKPT_NAME="gpt-j"
-# CKPT_NAME="meta_icl/train/HR/vanilla/test_target/chunk-1/pos0_<n>_r2s_trim/shot16/lr1e-05-bs1-G1-N8/len256-1024-None/gpt2-large/10-10-42/30000/"
-# CKPT_NAME=${5-"gpt2-large"}
-# CKPT_NAME="meta_icl/train/HR/vanilla/all_full/chunk-1/pos0_<n>_r2s_trim/shot16/lr1e-05-bs1-G1-N8/len256-1024-None/gpt2-large/10-10-42/30000"
-CKPT="${BASE_PATH}/icl_train/results/${CKPT_NAME}/"
+CKPT_NAME="gpt2-large"
+CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
-# FILTER_NUM=10000000
-DATA_PREFIX="${4-"general/full_100/SEARCH1/r2s"}"
-DATA_DIR="${BASE_PATH}/icl_train/unsup_data/${DATA_PREFIX}"
+RAW_DATA="100K_128"
+SEARCH_DATA="${RAW_DATA}/TRAIN_p1_en1_hn4_s42_lr5e-05-bs64-G1_4000.pt/L2"
+DATA_DIR="${BASE_PATH}/pretrain_data/raw/${RAW_DATA}"
+IDX_DATA_DIR="${BASE_PATH}/pretrain_data/retrieval_results/${SEARCH_DATA}"
 # hp
 EVAL_BATCH_SIZE=8
 # length
 MAX_LENGTH=1024
-MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
-SAVE_PATH="/home/lidong1/yuxian/unsup_data_filter/${DATA_PREFIX}/filter_res/"
+SAVE_PATH="${BASE_PATH}/pretrain_data/filter_results/"
 # seed
 SEED=10
 SEED_ORDER=10
@@ -39,45 +36,45 @@ SEED_ORDER=10
 OPTS=""
 # model
 OPTS+=" --base-path ${BASE_PATH}"
-OPTS+=" --model-config ${CKPT}"
+OPTS+=" --model-dir ${CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # OPTS+=" --gradient-checkpointing"
 # data
-OPTS+=" --data-dir ${DATA_DIR}"
-OPTS+=" --unsup-data-name filter"
-OPTS+=" --unsup-data-prefix ${DATA_PREFIX}"
+OPTS+=" --picl-data-dir ${DATA_DIR}"
+OPTS+=" --picl-idx-data-dir ${IDX_DATA_DIR}"
+OPTS+=" --picl-data-prefix ${SEARCH_DATA}"
+OPTS+=" --picl-data-name picl"
 OPTS+=" --num-workers 4"
-OPTS+=" --end-token nn"
-# OPTS+=" --filter-num ${FILTER_NUM}"
-# OPTS+=" --optim-batch"
 # hp
 OPTS+=" --eval-batch-size ${EVAL_BATCH_SIZE}"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE}"
-OPTS+=" --max-length-all-demos ${MAX_LENGTH_ALL_DEMOS}"
 # runtime
-OPTS+=" --log-interval 1"
 OPTS+=" --save ${SAVE_PATH}"
-OPTS+=" --no-extend-save-path"
 # seed
 OPTS+=" --seed ${SEED}"
 OPTS+=" --seed-order ${SEED_ORDER}"
 # deepspeed
 OPTS+=" --deepspeed"
-OPTS+=" --deepspeed_config ${BASE_PATH}/icl_train/configs/deepspeed/ds_config.json"
+OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # icl
 OPTS+=" --icl-sup all_target"
 # filter
+OPTS+=" --score-zero"
 OPTS+=" --score-icl"
+OPTS+=" --do-filter"
 OPTS+=" --filter-num 10000"
+OPTS+=" --filter-threshold 0.0"
 
 
 export PYTHONPATH=${BASE_PATH}
-CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/icl_train/filter.py ${OPTS} $@"
+CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/filter.py ${OPTS} $@"
 
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"
+
 mkdir -p ${SAVE_PATH}
+
 CODE_BASE=HF ${CMD}

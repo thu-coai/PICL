@@ -74,8 +74,9 @@ class DatasetItem(object):
 
 DATA_GROUP_CONFIG = {    
     "TRAIN": ["cos_e", "dream", "quail", "quartz", "social_i_qa", "wiqa", "cosmos_qa", "qasc", "quarel", "sciq", "wiki_hop", "adversarial_qa", 
-            "quoref", "ropes", "duorc_self", "duorc_para", "hotpot_qa_distractor", "hotpot_qa_fullwiki", "wiki_qa", "wiki_bio", "common_gen", "mrpc", 
-            "qqp", "paws_labeled_final", "art", "circa", "freebase_qa", "google_wellformed_query", "liar", "piqa", "scitail", "swag", "tab_fact", "yahoo_answers_topics"],
+            "quoref", "ropes", "duorc_self", "duorc_para", "hotpot_qa_distractor", "hotpot_qa_fullwiki", "wiki_qa", "common_gen", "wiki_bio", "samsum", "xsum", "mrpc",
+            "paws_labeled_final", "qqp", "art", "circa", "freebase_qa", "google_wellformed_query", "hellaswag", "liar", "piqa", "scitail", "swag", "tab_fact", 
+            "yahoo_answers_topics", "dbpedia_14"],
     "EVAL": ["sst2", "subj", "mr", "rte", "ag_news", "cb", "sst5"]
     
 }
@@ -260,6 +261,10 @@ DATA_CONFIG = {
     "qqp": DatasetItem(
         name=["glue", "qqp"],
         data_dir=os.path.join(BASE_DATA_DIR, "qqp/cache")
+    ),
+    "hellaswag": DatasetItem(
+        name=["hellaswag", None],
+        data_dir=os.path.join(BASE_DATA_DIR, "hellaswag/cache"),
     ),
     "anli_r1": DatasetItem(
         name=["anli", None],

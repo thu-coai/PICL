@@ -50,10 +50,7 @@ class ICLEvalCLSDataset(ICLEvalDataset):
         }
 
         for i, samp in enumerate(samples):
-            if self.args.add_bos:
-                icl_prefix_ids = [self.tokenizer.bos_token_id] + [x for y in samp["all_demo_ids"] for x in y[1:]] + samp["context_ids"][1:]
-            else:
-                icl_prefix_ids = [x for y in samp["all_demo_ids"] for x in y] + samp["context_ids"]
+            icl_prefix_ids = [x for y in samp["all_demo_ids"] for x in y] + samp["context_ids"]
                 
             input_len = len(icl_prefix_ids) - 1
             model_data["input_ids"][i][:input_len] = torch.tensor(icl_prefix_ids[:-1], dtype=torch.long) # we move the last token of the prefix to the begining of each option
@@ -159,8 +156,8 @@ class ICLEvalSNIDataset(Dataset):
 
     def _get_cache_path(self, data_name):
         data_dir = os.path.join(self.args.base_path, self.path, data_name)
-        r2s = "r2s" if self.args.replace_return_with_space else ""
-        trim = "trim" if self.args.trim else ""
+        r2s = "r2s"
+        trim = "trim"
         
         cache_path = os.path.join(data_dir, f"icl_new_cache/{r2s}/{trim}")
         return cache_path
@@ -182,22 +179,17 @@ class ICLEvalSNIDataset(Dataset):
         return all_data
 
     def _trunc_definition(self, definition):
-        if self.args.trim:
-            definition = re.sub("\n+", "\n", definition)
-
-        if self.args.replace_return_with_space:
-            definition = definition.replace("\n", " ")
+        definition = re.sub("\n+", "\n", definition)
+        definition = definition.replace("\n", " ")
             
         return definition
 
     def _trunc_data(self, inp, out):
-        if self.args.trim:
-            inp = re.sub("\n+", "\n", inp)
-            out = re.sub("\n+", "\n", out)
+        inp = re.sub("\n+", "\n", inp)
+        out = re.sub("\n+", "\n", out)
 
-        if self.args.replace_return_with_space:
-            inp = inp.replace("\n", " ")
-            out = out.replace("\n", " ")
+        inp = inp.replace("\n", " ")
+        out = out.replace("\n", " ")
         
         inp_ids = self.tokenizer.encode(inp)
         out_ids = self.tokenizer.encode(out)

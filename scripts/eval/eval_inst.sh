@@ -23,7 +23,6 @@ DATA_DIR="${BASE_PATH}/data/sni_eval/"
 EVAL_BATCH_SIZE=4
 # length
 MAX_LENGTH=1024
-MAX_LENGTH_ALL_DEMOS=-1
 MAX_LENGTH_PER_SAMPLE=256
 # runtime
 SAVE_PATH="${BASE_PATH}/results/eval/sni"
@@ -31,14 +30,13 @@ SAVE_PATH="${BASE_PATH}/results/eval/sni"
 SEED=10
 SEED_ORDER=10
 # icl
-TYPE="vanilla"
 SHOT=0 # test shots depend on each task in sni
 
 
 OPTS=""
 # model
 OPTS+=" --base-path ${BASE_PATH}"
-OPTS+=" --model-config ${CKPT}"
+OPTS+=" --model-dir ${CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # data
@@ -46,19 +44,15 @@ OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --data-names ${DATA_NAMES}"
 OPTS+=" --num-workers 2"
 OPTS+=" --balance-eval"
-OPTS+=" --ni-ref-file ${DATA_DIR}/test_references.jsonl"
+OPTS+=" --sni-ref-file ${DATA_DIR}/test_references.jsonl"
 # OPTS+=" --force-process"
 # OPTS+=" --force-process-demo"
 OPTS+=" --data-process-workers -1"
-OPTS+=" --trim"
-OPTS+=" --replace-return-with-space"
-OPTS+=" --end-token nn"
 # hp
 OPTS+=" --eval-batch-size ${EVAL_BATCH_SIZE}"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE}"
-OPTS+=" --max-length-all-demos ${MAX_LENGTH_ALL_DEMOS}"
 # runtime
 OPTS+=" --save ${SAVE_PATH}"
 # seed
@@ -67,10 +61,9 @@ OPTS+=" --seed-order ${SEED_ORDER}"
 OPTS+=" --reset-seed-each-data"
 # deepspeed
 OPTS+=" --deepspeed"
-OPTS+=" --deepspeed_config ${BASE_PATH}/icl_train/configs/deepspeed/ds_config.json"
+OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # icl
 OPTS+=" --shot ${SHOT}"
-OPTS+=" --type ${TYPE}"
 
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONIOENCODING=utf-8

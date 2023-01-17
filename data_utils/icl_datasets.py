@@ -16,14 +16,10 @@ from collections import Counter
 class ICLDataset(BaseDataset):
     def __init__(self, args, tokenizer, path, split, num, ratio, shot, rng_sample: random.Random, rng_order: random.Random, as_pool=True):
         super().__init__(args, tokenizer, path, split, num, ratio, shot, rng_sample, rng_order, as_pool)
-        if self.args.chunk_len + self.max_length_per_sample > self.gpt_max_length:
-            self.chunk_len = self.gpt_max_length - self.max_length_per_sample
-        else:
-            self.chunk_len = self.args.chunk_len
+        self.chunk_len = self.gpt_max_length - self.max_length_per_sample
 
         self.valid_max_length = {dn:{pn:self.max_length for pn in self.all_data[dn]} for dn in self.all_data}
         self.valid_max_length_per_sample = {dn:{pn:self.max_length_per_sample for pn in self.all_data[dn]} for dn in self.all_data}
-        self.valid_max_length_all_demos = {dn:{pn:self.max_length_all_demos for pn in self.all_data[dn]} for dn in self.all_data}
         self.valid_max_length_all_context = {dn:{pn:self.max_length for pn in self.all_data[dn]} for dn in self.all_data} # for generation prefix
         self.demo_pool = None
     
@@ -38,9 +34,9 @@ class ICLDataset(BaseDataset):
         chunked_demo_ids_only_target = [[]] if all_demo_ids_only_target is not None else None
         for i in range(len(all_demo_ids)):
             assert len(all_demo_ids[i]) <= chunk_len, all_demo_ids[i]
-            _demo_ids = all_demo_ids[i][1:] if self.args.add_bos else all_demo_ids[i]
+            _demo_ids = all_demo_ids[i]
             if all_demo_ids_only_target is not None:
-                _demo_ids_only_target = all_demo_ids_only_target[i][1:] if self.args.add_bos else all_demo_ids_only_target[i]
+                _demo_ids_only_target = all_demo_ids_only_target[i]
             if len(chunked_demo_ids[-1]) + len(_demo_ids) + 1 <= chunk_len:
                 chunked_demo_ids[-1].extend(_demo_ids)
                 if all_demo_ids_only_target is not None:
@@ -53,11 +49,6 @@ class ICLDataset(BaseDataset):
         if len(chunked_demo_ids) > 1:
             chunked_demo_ids.pop(-1)
             chunked_demo_ids_only_target.pop(-1)
-        
-        if self.args.add_bos:
-            chunked_demo_ids = [[self.bos_id] + x for x in chunked_demo_ids]
-            if all_demo_ids_only_target is not None:
-                chunked_demo_ids_only_target = [[-1] + x for x in chunked_demo_ids_only_target]
         
         return chunked_demo_ids, chunked_demo_ids_only_target
 
@@ -80,7 +71,7 @@ class ICLDataset(BaseDataset):
         }
 
     def _get_demo_cache_path(self, type, shot, pool_cache):
-        demo_cache = os.path.join(pool_cache, f"demo_cache/{self.split}/{type}/{shot}/{self.max_length_per_sample}/{self.max_length}_{self.max_length_all_demos}")
+        demo_cache = os.path.join(pool_cache, f"demo_cache/{self.split}/{type}/{shot}/{self.max_length_per_sample}/{self.max_length}_-1")
         return demo_cache
 
     def _get_demo_idxs_rand(self, samp, pool_d, pool_sid, shot, pool_split):
@@ -165,7 +156,6 @@ class ICLDataset(BaseDataset):
                     })
                 
                 self.valid_max_length[data_name][prompt_name] = valid_max_length
-                self.valid_max_length_all_demos[data_name][prompt_name] = valid_max_length_all_demos
                 self.valid_max_length_per_sample[data_name][prompt_name] = valid_max_length_per_sample
 
                 mean_real_shots = np.mean(real_shots) if len(real_shots) > 0 else 0
@@ -180,7 +170,6 @@ class ICLDataset(BaseDataset):
         if tmp_shot is not None:
             shot = tmp_shot
         
-        origin_shot = shot
         length_all_demos = max_length_all_demos + 1
         repeat_times = 0
         while length_all_demos > max_length_all_demos:  # repeat sampling untill the suitable prefix is sampled
@@ -198,20 +187,6 @@ class ICLDataset(BaseDataset):
 
             length_all_demos = sum([len(pool_d[idx]["context_ids"]) + len(pool_d[idx]["target_ids"]) for idx in demo_idxs])
         
-        # print("Shots", origin_shot, shot)
-        # if origin_shot != 0 and len(demo_idxs) == 0:
-        #     # add samples for shot == 0
-        #     if balance and DATA_CONFIG[data_name].finit_label(prompt_name):
-        #         demo_idxs = []
-        #         for l in pool_l:
-        #             demo_idxs.append(self.rng_sample.choice(pool_l[l]))
-        #             self.rng_sample.shuffle(demo_idxs)
-        #             length_all_demos = sum([len(pool_d[idx]["context_ids"]) + len(pool_d[idx]["target_ids"]) for idx in demo_idxs])
-        #             while length_all_demos > max_length_all_demos:
-        #                 print(len(demo_idxs), length_all_demos, max_length_all_demos)
-        #                 demo_idxs.pop()
-        #                 length_all_demos = sum([len(pool_d[idx]["context_ids"]) + len(pool_d[idx]["target_ids"]) for idx in demo_idxs])
-
         self.rng_order.shuffle(demo_idxs)
 
         return demo_idxs
@@ -244,10 +219,7 @@ class ICLDataset(BaseDataset):
                 demo_idxs = self._get_demo_ids_share(data_name, prompt_name, pool_d, pool_l, pool_sid, max_length_all_demos, balance)
                 all_demo_ids = [pool_d[idx]["context_ids"] + pool_d[idx]["target_ids"] for idx in demo_idxs]
                 
-                if self.args.add_bos:
-                    flat_all_demo_ids = [self.tokenizer.bos_token_id] + [x for y in all_demo_ids for x in y[1:]]
-                else:
-                    flat_all_demo_ids = [x for y in all_demo_ids for x in y]
+                flat_all_demo_ids = [x for y in all_demo_ids for x in y]
                     
                 print_rank(self.tokenizer.decode(flat_all_demo_ids).encode("utf-8"))
                 
@@ -268,7 +240,6 @@ class ICLDataset(BaseDataset):
 
                 self.valid_max_length[data_name][prompt_name] = valid_max_length
                 self.valid_max_length_per_sample[data_name][prompt_name] = valid_max_length_per_sample
-                self.valid_max_length_all_demos[data_name][prompt_name] = len(flat_all_demo_ids)
                 self.valid_max_length_all_context[data_name][prompt_name] = valid_max_all_context_length
                 
                 label_dist = Counter([pool_d[idx]["target_str"] for idx in demo_idxs]) if balance and DATA_CONFIG[data_name].finit_label(prompt_name) else None

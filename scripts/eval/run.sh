@@ -1,5 +1,5 @@
 port=2040
-base_dir=/home/lidong1/CodeRepo/icl_train/scripts/infer_debug
+base_dir=/home/lidong1/CodeRepo/scripts/infer_debug
 
 for seed in 10 20 30 40 50
 do

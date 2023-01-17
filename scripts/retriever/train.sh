@@ -10,8 +10,8 @@ MASTER_PORT=${3-2010}
 MODEL_NAME="roberta-base"
 MODEL_DIR="${WORKING_DIR}/checkpoints/${MODEL_NAME}/"
 # data
-DATA_TAG="${4-HR/pos1_easy_neg1_hard_neg1_seed42_concate32}"
-DATA_DIR="${WORKING_DIR}/dpr_data/${DATA_TAG}/merge"
+DATA_NAME="${4-TRAIN/p1_en1_hn4_s42}"
+DATA_DIR="${WORKING_DIR}/retriever_data/${DATA_NAME}/merge"
 # hp
 BATCH_SIZE=64
 LR=0.00005
@@ -20,30 +20,32 @@ DEV_BATCH_SIZE=32
 EVAL_BATCH_SIZE=32
 EPOCHS=10
 # runtime
-SAVE_PATH="${WORKING_DIR}/results/retriever/${DATA_TAG}/bs${BATCH_SIZE}_${EVAL_BATCH_SIZE}_lr${LR}_G${GRAD_ACC}_SEED${SEED}"
-# seed
-SEED=10
+SAVE_PATH="${WORKING_DIR}/results/retriever/"
 
 
 OPTS=""
 # model
-OPTS+=" --model_dir ${MODEL_DIR}"
-OPTS+=" --model_name ${MODEL_NAME}"
-OPTS+=" --share_model"
+OPTS+=" --model-dir ${MODEL_DIR}"
+OPTS+=" --ckpt-name ${MODEL_NAME}"
+OPTS+=" --share-model"
 # data
-OPTS+=" --data_dir ${DATA_DIR}"
-OPTS+=" --load_data_workers 32"
+OPTS+=" --data-dir ${DATA_DIR}"
+OPTS+=" --data-names ${DATA_NAME}"
+OPTS+=" --num-workers 32"
 # hp
 OPTS+=" --lr ${LR}"
-OPTS+=" --batch_size ${BATCH_SIZE}"
-OPTS+=" --gradient_accumulation_steps ${GRAD_ACC}"
-OPTS+=" --eval_batch_size ${EVAL_BATCH_SIZE}"
+OPTS+=" --batch-size ${BATCH_SIZE}"
+OPTS+=" --gradient-accumulation-steps ${GRAD_ACC}"
+OPTS+=" --eval-batch-size ${EVAL_BATCH_SIZE}"
 OPTS+=" --epochs ${EPOCHS}"
+OPTS+=" --max-length 256"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --save ${SAVE_PATH}"
+OPTS+=" --log-interval 1"
+OPTS+=" --save-log-interval 10"
 # seed
-OPTS+=" --seed ${SEED}"
+OPTS+=" --seed 10"
 
 
 CMD="python3 ${WORKING_DIR}/retriever.py ${OPTS}"
