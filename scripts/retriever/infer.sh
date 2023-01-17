@@ -1,6 +1,6 @@
 #! /bin/bash
 
-WORKING_DIR=${1-"/home/guyuxian/dpr-simple"}
+WORKING_DIR=${1}
 
 NUM_GPUS_PER_WORKER=${2-4} # number of gpus used on one node
 
@@ -29,7 +29,7 @@ OPTS+=" --share-model"
 OPTS+=" --data-names ${DATA_NAME}"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
-OPTS+=" --num-workers 32"
+OPTS+=" --data-process-workers 32"
 # hp
 OPTS+=" --batch-size ${BATCH_SIZE}"
 OPTS+=" --max-length ${MAX_LEN}"

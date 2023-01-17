@@ -1,6 +1,6 @@
 #! /bin/bash
 
-WORKING_DIR=${1-"/home/guyuxian/dpr-simple"}
+WORKING_DIR=${1}
 
 MODEL_DIR="${WORKING_DIR}/checkpoints/roberta-base/"
 METRIC_TYPE="L2"

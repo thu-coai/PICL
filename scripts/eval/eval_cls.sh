@@ -13,7 +13,7 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
                   --master_port $MASTER_PORT"
 
 # model
-BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
+BASE_PATH=${1}
 CKPT_NAME=${7-"gpt2-large"}
 CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
@@ -67,6 +67,7 @@ OPTS+=" --shot ${SHOT}"
 OPTS+=" --icl-share-demo"
 OPTS+=" --icl-balance"
 
+export TOKENIZERS_PARALLELISM=false
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONIOENCODING=utf-8
 export PYTHONPATH=${BASE_PATH}

@@ -13,7 +13,7 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
                   --master_port $MASTER_PORT"
 
 # model
-BASE_PATH=${1-"/home/guyuxian/CodeRepo"}
+BASE_PATH=${1}
 CKPT_NAME="gpt2-large"
 CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
