@@ -1,20 +1,6 @@
 dataset: glue
 subset: qqp
 templates:
-  3202b8e8-8b8b-42c9-aad3-97feb84813d6: !Template
-    answer_choices: False ||| True
-    id: 3202b8e8-8b8b-42c9-aad3-97feb84813d6
-    jinja: 'Question 1: {{question1}} Question 2: {{question2}}\Label: ||| {{ answer_choices[label]
-      }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: true
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   8e711799-a57c-4941-833b-466bedfb80ad: !Template
     answer_choices: no ||| yes
     id: 8e711799-a57c-4941-833b-466bedfb80ad

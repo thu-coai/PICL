@@ -12,4 +12,4 @@ PYTHONPATH=${BASE_PATH} python3 ${BASE_PATH}/tools/process_picl_data.py \
     --model-dir ${BASE_PATH}/results/gpt2-large \
     --max-length ${MAX_LENGTH} \
     --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE} \
-    --num-workers 64 \
+    --data-process-workers 64 \

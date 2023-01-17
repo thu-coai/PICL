@@ -13,5 +13,5 @@ PYTHONPATH=${BASE_PATH} python3 ${BASE_PATH}/tools/split_picl_train_valid.py \
     --model-dir ${BASE_PATH}/results/gpt2-large \
     --max-length ${MAX_LENGTH} \
     --max-length-per-sample ${MAX_LENGTH_PER_SAMPLE} \
-    --num-workers 64 \
+    --data-process-workers 64 \
     --picl-valid-num 1000

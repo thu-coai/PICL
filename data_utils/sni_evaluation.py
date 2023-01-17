@@ -8,7 +8,7 @@ from .sni_tasks import NI_TASKS
 
 
 class GPTTokenizer:
-    gpt_tokenizer = AutoTokenizer.from_pretrained("/home/lidong1/CodeRepo/checkpoints/gpt2-large", max_length=1e5)
+    gpt_tokenizer = AutoTokenizer.from_pretrained("results/gpt2-large", max_length=1e5)
 
     def tokenize(self, s):
         tokens = self.gpt_tokenizer.tokenize(s)
@@ -103,7 +103,7 @@ def parse_args():
         help="Jsonl file with each line corresponding to a prediction. " 
              "Each json object should have an `id` and a `prediction` key.")
     parser.add_argument(
-        "--ref_file", default="/home/lidong1/CodeRepo/test_references.jsonl",
+        "--ref_file", default=None,
         help="Jsonl file with each line corresponding to a reference. " 
              "Each json object should have an `id` and a `references` key. "
              "`task_id`, `task_category` and `task_track` are optional, which will be used to "

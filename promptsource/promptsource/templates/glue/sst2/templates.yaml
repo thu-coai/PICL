@@ -34,47 +34,6 @@ templates:
       original_task: true
     name: review
     reference: ''
-  2ee8ab95-08a7-466a-9176-1927fae2fef8: !Template
-    answer_choices: negative ||| positive
-    id: 2ee8ab95-08a7-466a-9176-1927fae2fef8
-    jinja: "{{sentence}}\n ||| {{ answer_choices[label] }}"
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: '
-
-        '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Minimal Prompt
-    reference: gyx
-  310772ab-d990-492e-b5fe-e2e470329e55: !Template
-    answer_choices: negative ||| positive
-    id: 310772ab-d990-492e-b5fe-e2e470329e55
-    jinja: 'Review: {{sentence}} Sentiment: ||| {{ answer_choices[label] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Simple Prompt 2
-    reference: gyx
-  3b3c7436-6172-438f-ac29-d66d04177ac9: !Template
-    answer_choices: negative ||| positive
-    id: 3b3c7436-6172-438f-ac29-d66d04177ac9
-    jinja: "Review: {{sentence}} \nSentiment: ||| {{ answer_choices[label] }}"
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Simple Prompt
-    reference: gyx
   5aa0cea9-0f8d-454d-b25b-b0d4cda273b8: !Template
     answer_choices: sad ||| happy
     id: 5aa0cea9-0f8d-454d-b25b-b0d4cda273b8
@@ -111,19 +70,6 @@ templates:
       original_task: true
     name: following positive negative
     reference: ''
-  6c4b1bc9-aed0-4fcc-aaf2-7ad35d51f85a: !Template
-    answer_choices: Negative ||| Positive
-    id: 6c4b1bc9-aed0-4fcc-aaf2-7ad35d51f85a
-    jinja: 'Sentence: {{sentence}} Label: ||| {{ answer_choices[label] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   6dd74cd5-e074-4612-9e96-c17ca88c3bc4: !Template
     answer_choices: bad ||| good
     id: 6dd74cd5-e074-4612-9e96-c17ca88c3bc4
@@ -138,15 +84,17 @@ templates:
       original_task: true
     name: happy or mad
     reference: ''
-  a4fc30ea-1a0f-4216-b5f2-e5b18000a1b0: !Template
-    answer_choices: bad. ||| good.
-    id: a4fc30ea-1a0f-4216-b5f2-e5b18000a1b0
-    jinja: '{{sentence}} It is ||| {{ answer_choices[label] }}'
+  d0186dbd-0cf3-4f04-b888-afe267aae14f: !Template
+    answer_choices: Negative ||| Positive
+    id: d0186dbd-0cf3-4f04-b888-afe267aae14f
+    jinja: 'Sentence: {{sentence}}
+
+      Label: ||| {{ answer_choices[label] }}'
     metadata: !TemplateMetadata
       choices_in_prompt: false
       languages: null
       metrics:
       - Accuracy
       original_task: true
-    name: It is
-    reference: gyx
+    name: Easy Prompt
+    reference: ''

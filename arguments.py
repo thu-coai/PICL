@@ -73,6 +73,7 @@ def add_runtime_args(parser: argparse.ArgumentParser):
     group.add_argument('--save-interval', type=int, default=1000, help='number of iterations between saves')
     group.add_argument("--eval-interval", type=int, default=1000)
     group.add_argument('--local_rank', type=int, default=None, help='local rank passed from distributed launcher')
+    group.add_argument("--num-workers", type=int, default=1)
     
     return parser
 
@@ -92,7 +93,6 @@ def add_data_args(parser: argparse.ArgumentParser):
     group.add_argument("--train-ratio", type=float, default=1)
     group.add_argument("--dev-num", type=int, default=-1)
     group.add_argument("--dev-ratio", type=float, default=1)
-    group.add_argument("--num-workers", type=int, default=1)
     group.add_argument("--train-prompts", type=str, default=None)
     group.add_argument("--eval-prompts", type=str, default=None)
     

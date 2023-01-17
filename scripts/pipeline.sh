@@ -1,4 +1,4 @@
-BASE_PATH="/home/lidong1/yuxian/PICL/"
+BASE_PATH="/PATH/TO/THIS/PROJECT"
 
 # Process general corpus. Split documents into paragraphs.
 bash scripts/tools/process_corpus.sh

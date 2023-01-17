@@ -302,10 +302,7 @@ class BaseDataset(Dataset):
         # tokenize
         context_ids = tokenizer.encode(context_str, add_special_tokens=False)
         target_ids = tokenizer.encode(target_str, add_special_tokens=False) + [self.delimiter_id]
-        
-        if args.add_bos :
-            context_ids = [tokenizer.bos_token_id] + context_ids
-        
+                
         if len(context_ids) + len(target_ids) > max_length_per_sample:
             return None
 

@@ -172,21 +172,6 @@ templates:
       original_task: true
     name: Predict ending with hint
     reference: Predict the ending with the activity label as the hint
-  8c83243e-072f-49e2-9dbd-82038843d69b: !Template
-    answer_choices: '{{endings | join(" ||| ")}}'
-    id: 8c83243e-072f-49e2-9dbd-82038843d69b
-    jinja: 'Story: {{ctx}}
-
-      Ending: ||| {{answer_choices[label | int()]}}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   a8ab00ee-78ad-465b-bbf0-9cd3d242dd7e: !Template
     answer_choices: null
     id: a8ab00ee-78ad-465b-bbf0-9cd3d242dd7e

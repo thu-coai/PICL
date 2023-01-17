@@ -56,21 +56,6 @@ templates:
       original_task: true
     name: Reviewer Enjoyment Yes No
     reference: ''
-  7332f910-f514-4414-aea4-e177e9f2e59f: !Template
-    answer_choices: Negative ||| Positive
-    id: 7332f910-f514-4414-aea4-e177e9f2e59f
-    jinja: 'Sentence: {{text}}
-
-      Label: ||| {{ answer_choices[label] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt 2
-    reference: gyx
   7a8ccb1c-6737-4863-b08a-61d4a2839204: !Template
     answer_choices: They didn't like it ||| They loved it
     id: 7a8ccb1c-6737-4863-b08a-61d4a2839204
@@ -84,6 +69,20 @@ templates:
       - Accuracy
       original_task: true
     name: Reviewer Enjoyment
+    reference: ''
+  8d93daaa-9467-4013-90b7-f8cd60f2073e: !Template
+    answer_choices: Negative ||| Positive
+    id: 8d93daaa-9467-4013-90b7-f8cd60f2073e
+    jinja: 'Sentence: {{text}}
+
+      Label: ||| {{ answer_choices[label] }}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: false
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: Easy Prompt
     reference: ''
   94e190d5-2196-486e-908b-759f288eac6e: !Template
     answer_choices: negative ||| positive
@@ -141,21 +140,6 @@ templates:
       original_task: true
     name: Reviewer Expressed Sentiment
     reference: ''
-  db27f531-8148-476c-8f8b-c226de82aa06: !Template
-    answer_choices: Negative ||| Positive
-    id: db27f531-8148-476c-8f8b-c226de82aa06
-    jinja: 'Review: {{text}}
-
-      Sentiment: ||| {{ answer_choices[label] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   e05ec7b9-5a8d-4670-9723-0237c1bb1eca: !Template
     answer_choices: negative ||| positive
     id: e05ec7b9-5a8d-4670-9723-0237c1bb1eca

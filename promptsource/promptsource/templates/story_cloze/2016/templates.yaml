@@ -33,21 +33,6 @@ templates:
       original_task: true
     name: Choose Story Ending
     reference: ''
-  6de2bf07-cbb2-48ac-a5ee-37806dab1929: !Template
-    answer_choices: null
-    id: 6de2bf07-cbb2-48ac-a5ee-37806dab1929
-    jinja: '{{input_sentence_1}} {{input_sentence_2}} {{input_sentence_3}} {{input_sentence_4}}
-      ||| {{answer_choices[answer_right_ending-1]}}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - BLEU
-      - ROUGE
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   9dab69d1-cad0-4d2f-a7cc-120df233571c: !Template
     answer_choices: '{{sentence_quiz1}} ||| {{sentence_quiz2}}'
     id: 9dab69d1-cad0-4d2f-a7cc-120df233571c

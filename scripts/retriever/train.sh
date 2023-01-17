@@ -31,7 +31,7 @@ OPTS+=" --share-model"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --data-names ${DATA_NAME}"
-OPTS+=" --num-workers 32"
+OPTS+=" --data-process-workers 32"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"

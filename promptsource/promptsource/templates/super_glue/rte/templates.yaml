@@ -44,40 +44,6 @@ templates:
       original_task: true
     name: can we infer
     reference: Webson & Pavlick 2021
-  685900bd-9672-4726-99af-c8256a80f827: !Template
-    answer_choices: True ||| False
-    id: 685900bd-9672-4726-99af-c8256a80f827
-    jinja: '{{premise}}
-
-      question: {{hypothesis}} True or False?
-
-      answer: ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: true
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Simple Prompt
-    reference: gyx
-  768a71fb-2b5a-4394-bf97-4d86863ee5cb: !Template
-    answer_choices: Yes ||| No
-    id: 768a71fb-2b5a-4394-bf97-4d86863ee5cb
-    jinja: 'Passage: {{premise}}
-
-      Question: {{hypothesis}}
-
-      Answer: ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: true
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt 2
-    reference: gyx
   8fb1c6aa-20e9-438c-bece-c6af1c746449: !Template
     answer_choices: True ||| False
     id: 8fb1c6aa-20e9-438c-bece-c6af1c746449
@@ -94,22 +60,6 @@ templates:
       original_task: true
     name: GPT-3 style
     reference: Same as reported in Figure G31 of the GPT-3 paper.
-  985d5930-ea40-4068-acba-eec494c21490: !Template
-    answer_choices: entailment ||| not_entailment
-    id: 985d5930-ea40-4068-acba-eec494c21490
-    jinja: 'sentence 1: {{premise}} [SEP] sentence 2: {{hypothesis}} ||| {% if label
-      != -1 %}{{ answer_choices[label] }}{% endif %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: true
-      concate_str: '
-
-        '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Minimal Prompt
-    reference: gyx
   9e078fb4-505b-413c-bb5e-3cd16ddcf5d7: !Template
     answer_choices: Yes ||| No
     id: 9e078fb4-505b-413c-bb5e-3cd16ddcf5d7
@@ -124,6 +74,22 @@ templates:
       original_task: true
     name: does this imply
     reference: Sanh et al. 2021
+  a4af55c0-3474-4614-9015-f30784f683f5: !Template
+    answer_choices: Yes ||| No
+    id: a4af55c0-3474-4614-9015-f30784f683f5
+    jinja: 'Passage: {{premise}}
+
+      Question: {{hypothesis}} Yes or No?
+
+      Answer: ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif %}'
+    metadata: !TemplateMetadata
+      choices_in_prompt: true
+      languages: null
+      metrics:
+      - Accuracy
+      original_task: true
+    name: Easy Prompt
+    reference: ''
   b8dc85c6-28b6-4340-979a-8e77c2a0dde8: !Template
     answer_choices: Yes ||| No
     id: b8dc85c6-28b6-4340-979a-8e77c2a0dde8
@@ -166,23 +132,6 @@ templates:
       original_task: true
     name: based on the previous passage
     reference: "Adapted from the BoolQ prompts in Schick & Sch\xFCtze 2021."
-  ed84c242-a84e-4c90-94ee-0c69169f8c88: !Template
-    answer_choices: Yes ||| No
-    id: ed84c242-a84e-4c90-94ee-0c69169f8c88
-    jinja: 'Passage: {{premise}}
-
-      Question: {{hypothesis}} Yes or No?
-
-      Answer: ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: true
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   ee0ce095-122a-4509-bf0b-33d1495295f7: !Template
     answer_choices: Yes ||| No
     id: ee0ce095-122a-4509-bf0b-33d1495295f7

@@ -303,7 +303,7 @@ DATA_CONFIG = {
         name=["glue", "sst2"],
         data_dir=os.path.join(BASE_DATA_DIR, "sst2/cache"),
         finite_label_prompt=None,
-        option_id_space={"Simple Prompt": [0, 1], "Simple Prompt 2": [0, 1]}
+        option_id_space={"Easy Prompt": [0, 1], "Easy Prompt 2": [0, 1]}
     ),
     "qnli": DatasetItem(
         name=["glue", "qnli"],
@@ -379,57 +379,57 @@ DATA_CONFIG = {
     "sst2": DatasetItem(
         name=["glue", "sst2"],
         data_dir=os.path.join(BASE_DATA_DIR, "sst2/cache"),
-        allowed_prompt_train=["MSRA Prompt"],
-        allowed_prompt_eval=["MSRA Prompt"],
-        finite_label_prompt=["MSRA Prompt"],
-        option_id_space={"MSRA Prompt": [0, 1]}
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
+        option_id_space={"Easy Prompt": [0, 1]}
     ),
     "sst5": DatasetItem(
         name=["sst5", None],
         data_dir=os.path.join(BASE_DATA_DIR, "sst5/cache/"),
-        allowed_prompt_train=["MSRA Prompt"],
-        allowed_prompt_eval=["MSRA Prompt"],
-        finite_label_prompt=["MSRA Prompt"],
-        option_id_space={"MSRA Prompt": [0, 1, 2, 3, 4]}
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
+        option_id_space={"Easy Prompt": [0, 1, 2, 3, 4]}
     ),
     "subj": DatasetItem(
         name=["subj", None],
         data_dir=os.path.join(BASE_DATA_DIR, "subj/cache/"),
-        allowed_prompt_train=["MSRA Prompt 4"],
-        allowed_prompt_eval=["MSRA Prompt 4"],
-        finite_label_prompt=["MSRA Prompt 4"],
-        option_id_space={"MSRA Prompt 4": [0, 1]}
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
+        option_id_space={"Easy Prompt": [0, 1]}
     ),
     "ag_news": DatasetItem(
         name=["ag_news", None],
         data_dir=os.path.join(BASE_DATA_DIR, "ag_news/cache/"),
-        allowed_prompt_train=["MSRA Prompt 6"],
-        allowed_prompt_eval=["MSRA Prompt 6"],
-        finite_label_prompt=["MSRA Prompt 6"],
-        option_id_space={"MSRA Prompt 6": [0, 1, 2, 3]}
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
+        option_id_space={"Easy Prompt": [0, 1, 2, 3]}
     ),
     "rte": DatasetItem(
         name=["super_glue", "rte"],
         data_dir=os.path.join(BASE_DATA_DIR, "rte/cache"),
-        allowed_prompt_train=["MSRA Prompt"],
-        allowed_prompt_eval=["MSRA Prompt"],
-        finite_label_prompt=["MSRA Prompt"],
-        option_id_space={"MSRA Prompt": [0, 1]}
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
+        option_id_space={"Easy Prompt": [0, 1]}
     ),
     "cb": DatasetItem(
         name=["super_glue", "cb"],
         data_dir=os.path.join(BASE_DATA_DIR, "cb/cache"),
-        allowed_prompt_train=["MSRA Prompt 3"],
-        allowed_prompt_eval=["MSRA Prompt 3"],
-        finite_label_prompt=["MSRA Prompt 3"],
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
         option_id_space=None
     ),
     "mr": DatasetItem(
         name=["rotten_tomatoes", None],
         data_dir=os.path.join(BASE_DATA_DIR, "mr/cache"),
-        allowed_prompt_train=["MSRA Prompt 2"],
-        allowed_prompt_eval=["MSRA Prompt 2"],
-        finite_label_prompt=["MSRA Prompt 2"],
-        option_id_space={"MSRA Prompt 2": [0, 1]}
+        allowed_prompt_train=["Easy Prompt"],
+        allowed_prompt_eval=["Easy Prompt"],
+        finite_label_prompt=["Easy Prompt"],
+        option_id_space={"Easy Prompt": [0, 1]}
     ),
 }

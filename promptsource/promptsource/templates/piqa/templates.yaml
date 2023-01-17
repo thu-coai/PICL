@@ -217,21 +217,6 @@ templates:
       original_task: false
     name: no prompt needed
     reference: ''
-  db5cf9c3-148c-4490-ba4c-50f1bae2b9f0: !Template
-    answer_choices: '{{sol1}} ||| {{sol2}}'
-    id: db5cf9c3-148c-4490-ba4c-50f1bae2b9f0
-    jinja: 'Goal: {{goal}}
-
-      Ending: ||| {{answer_choices[label]}}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   f044def7-01c2-42de-b6ad-4e8c63ab2bf1: !Template
     answer_choices: Yes ||| No
     id: f044def7-01c2-42de-b6ad-4e8c63ab2bf1

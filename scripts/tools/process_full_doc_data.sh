@@ -9,4 +9,4 @@ PYTHONPATH=${BASE_PATH} CODE_BASE=HF python3 ${BASE_PATH}/tools/process_full_doc
     --processed-output ${BASE_PATH}/pretrain_data/full_doc/${DATA_NAME} \
     --model-dir ${BASE_PATH}/results/gpt2-large \
     --max-length ${MAX_LENGTH} \
-    --num-workers 64 \
+    --data-process-workers 64 \

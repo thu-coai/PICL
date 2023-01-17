@@ -103,20 +103,6 @@ templates:
       original_task: true
     name: "\u2026As a result, C1 or C2?"
     reference: ''
-  867dfaa6-e6af-4ba2-8f99-bdb3972e8372: !Template
-    answer_choices: '{{choice1}} ||| {{choice2}}'
-    id: 867dfaa6-e6af-4ba2-8f99-bdb3972e8372
-    jinja: '{{ premise }}{% if question == "cause" %} because {% else %} so {% endif
-      %} ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Simple Prompt
-    reference: gyx
   8ce80f8a-239e-4393-892c-f63dbb0d9929: !Template
     answer_choices: '{{choice1}} ||| {{choice2}}'
     id: 8ce80f8a-239e-4393-892c-f63dbb0d9929
@@ -203,42 +189,6 @@ templates:
       original_task: true
     name: "\u2026why? C1 or C2"
     reference: ''
-  ad8015d5-fb16-4532-82a5-435405838cce: !Template
-    answer_choices: '{{choice1}} ||| {{choice2}}'
-    id: ad8015d5-fb16-4532-82a5-435405838cce
-    jinja: '{% if question == "cause" %}Effect: {{ premise }}
-
-      Cause: {% else %}Cause: {{ premise }}
-
-      Effect: {% endif %} ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif
-      %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
-  cd2f527a-02a5-44d2-87c3-c30d7d9dc834: !Template
-    answer_choices: '{% if question == "cause" %} Cause: {% else %} Effect: {% endif
-      %}{{choice1}} ||| {% if question == "cause" %} Cause: {% else %} Effect: {%
-      endif %}{{choice2}}'
-    id: cd2f527a-02a5-44d2-87c3-c30d7d9dc834
-    jinja: '{% if question == "cause" %} Effect: {% else %} Cause: {% endif %}{{ premise
-      }} ||| {% if label != -1 %}{{ answer_choices[label] }}{% endif %}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: '
-
-        '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: Minimal Prompt
-    reference: gyx
   f32348cd-d3cb-4619-87b9-e24f99c78567: !Template
     answer_choices: '{{choice1}} ||| {{choice2}}'
     id: f32348cd-d3cb-4619-87b9-e24f99c78567

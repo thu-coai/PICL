@@ -90,7 +90,7 @@ def main():
     fout = open(os.path.join(output_path, "processed_dup"), "w", encoding="utf-8")
 
     encoder = Encoder(args)
-    pool = multiprocessing.Pool(args.num_workers, initializer=encoder.initializer)
+    pool = multiprocessing.Pool(args.data_process_workers, initializer=encoder.initializer)
     
     # use the tokenizer to encode the sentences
     encoded_docs = pool.imap_unordered(encoder.encode, fin, 10)

@@ -1,21 +1,6 @@
 dataset: glue
 subset: mrpc
 templates:
-  2b467cc2-13e6-405c-b8a5-a325a7241ab8: !Template
-    answer_choices: False ||| True
-    id: 2b467cc2-13e6-405c-b8a5-a325a7241ab8
-    jinja: 'Sentence 1: {{sentence1}} Sentence 2: {{sentence2}}
-
-      Label: ||| {{ answer_choices[label] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: true
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   3b88d2c4-0aeb-4c6d-9ccc-653a388250a5: !Template
     answer_choices: null
     id: 3b88d2c4-0aeb-4c6d-9ccc-653a388250a5

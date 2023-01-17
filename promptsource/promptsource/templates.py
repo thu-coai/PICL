@@ -427,7 +427,6 @@ class Template(yaml.YAMLObject):
             choices_in_prompt: Optional[bool] = None,
             metrics: Optional[List[str]] = None,
             languages: Optional[List[str]] = None,
-            concate_str: Optional[str] = " "
         ):
             """
             Initializes template metadata.
@@ -447,7 +446,6 @@ class Template(yaml.YAMLObject):
             self.choices_in_prompt = choices_in_prompt
             self.metrics = metrics
             self.languages = languages
-            self.concate_str = concate_str
 
 
 class TemplateCollection:

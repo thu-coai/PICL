@@ -78,7 +78,7 @@ class RetrieverDataset(Dataset):
                 with open(cache_path, "wb") as f:
                     pickle.dump(self.data, f)
             else:
-                self.data, data_reordered = self.load_data_parallel(path, args.num_workers)
+                self.data, data_reordered = self.load_data_parallel(path, args.data_process_workers)
                 with open(cache_path, "wb") as f:
                     pickle.dump(self.data, f)
                     
@@ -227,11 +227,11 @@ class RetrieverInferDataset(Dataset):
                 
         if not os.path.exists(cache_ok_path):
             if dist.get_rank() == 0:
-                if args.num_workers <= 0:
+                if args.data_process_workers <= 0:
                     self.load_data(path, self.cache_dir)
                 else:
                     print("Process at rank 0")
-                    self.load_data_parallel(path, self.cache_dir, args.num_workers)
+                    self.load_data_parallel(path, self.cache_dir, args.data_process_workers)
                 with open(cache_ok_path, "w") as f:
                     f.write("OK")
             dist.barrier()

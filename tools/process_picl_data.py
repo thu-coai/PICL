@@ -49,7 +49,7 @@ def process_data(args):
         # encoder use the tokenizer to encode data
         encoder = Encoder(args)
 
-        pool = multiprocessing.Pool(processes=args.num_workers, initializer=encoder.initializer)
+        pool = multiprocessing.Pool(processes=args.data_process_workers, initializer=encoder.initializer)
         encoded_docs = pool.imap_unordered(encoder.encode, enumerate(fin), chunksize=10)
         proc_start = time.time()
         total_bytes_processed = 0

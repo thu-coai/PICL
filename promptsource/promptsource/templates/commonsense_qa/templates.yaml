@@ -100,21 +100,6 @@ templates:
       original_task: true
     name: most_suitable_answer
     reference: ''
-  bc2d74ac-aa91-40ae-b85c-57107e939f88: !Template
-    answer_choices: '{{choices.text | join("|||")}}'
-    id: bc2d74ac-aa91-40ae-b85c-57107e939f88
-    jinja: 'Question: {{question}}
-
-      Answer: ||| {{answer_choices[choices["label"].index(answerKey)]}}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   bc718994-1d3e-4ae4-b65b-be307154b0a6: !Template
     answer_choices: null
     id: bc718994-1d3e-4ae4-b65b-be307154b0a6

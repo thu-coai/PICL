@@ -91,39 +91,6 @@ templates:
       original_task: true
     name: answer_the_question
     reference: ''
-  7c48c598-e81e-41b5-b420-9722a91c9ac1: !Template
-    answer_choices: null
-    id: 7c48c598-e81e-41b5-b420-9722a91c9ac1
-    jinja: 'Passsage: {{context}}
-
-      Question: ||| {{question}}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - BLEU
-      - ROUGE
-      original_task: true
-    name: MSRA Prompt (Gen)
-    reference: gyx
-  83ec5a32-521a-41c4-a2d3-6dd5fd740804: !Template
-    answer_choices: null
-    id: 83ec5a32-521a-41c4-a2d3-6dd5fd740804
-    jinja: 'Passage: {{context}}
-
-      Question: {{question}}
-
-      Answer: ||| {{answers["text"][0]}}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Squad
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   e153c4cd-6757-487a-8fe6-da7e88ec3e47: !Template
     answer_choices: null
     id: e153c4cd-6757-487a-8fe6-da7e88ec3e47

@@ -15,22 +15,6 @@ templates:
       original_task: true
     name: what_category_best_describe
     reference: ''
-  25a7f3b3-678f-418e-96bb-314f2d5a40b7: !Template
-    answer_choices: Description ||| Entity ||| Expression ||| Person ||| Number |||
-      Location
-    id: 25a7f3b3-678f-418e-96bb-314f2d5a40b7
-    jinja: 'Question: {{text}}
-
-      Type: ||| {{ answer_choices[label_coarse] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt
-    reference: gyx
   2d4e0add-cfca-4f54-80a2-ddd8e91f9fd6: !Template
     answer_choices: city ||| country ||| mountain ||| state ||| other location
     id: 2d4e0add-cfca-4f54-80a2-ddd8e91f9fd6
@@ -297,22 +281,6 @@ templates:
       original_task: false
     name: fine_grained_ABBR
     reference: Fine grained labels with coarse-label `ABBR`, context after question
-  9834f753-964b-4d3a-be55-a70337445549: !Template
-    answer_choices: Description ||| Entity ||| Expression ||| Person ||| Number |||
-      Location
-    id: 9834f753-964b-4d3a-be55-a70337445549
-    jinja: 'Sentence: {{text}}
-
-      Label: ||| {{ answer_choices[label_coarse] }}'
-    metadata: !TemplateMetadata
-      choices_in_prompt: false
-      concate_str: ' '
-      languages: null
-      metrics:
-      - Accuracy
-      original_task: true
-    name: MSRA Prompt 2
-    reference: gyx
   a0096044-3b4c-4c80-b139-25eac8fe692a: !Template
     answer_choices: abbreviation ||| expression abbreviated
     id: a0096044-3b4c-4c80-b139-25eac8fe692a
