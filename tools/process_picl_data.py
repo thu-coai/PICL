@@ -8,7 +8,7 @@ import numpy as np
 from tqdm import tqdm
 from data_utils.indexed_dataset import make_builder
 from data_utils.distributed_indexed import DistributedMMapIndexedDataset
-from transformers import GPT2Tokenizer
+from transformers import AutoTokenizer
 
 import argparse
 from arguments import add_model_config_args, add_hp_args, add_runtime_args, add_data_args, add_pretraining_args, add_icl_args
@@ -19,7 +19,7 @@ class Encoder(object):
         self.args = args
         
     def initializer(self):
-        Encoder.tokenizer = GPT2Tokenizer.from_pretrained(self.args.model_dir)
+        Encoder.tokenizer = AutoTokenizer.from_pretrained(self.args.model_dir)
 
     def encode(self, line):
         oid, line = line
@@ -40,57 +40,53 @@ def get_np_map(map_ids, max_num):
 
 
 def process_data(args):    
-    for ith in range(0, 100):
-        file_name = os.path.join(args.picl_data_dir, "{}_{}".format(args.picl_data_name, ith))
-        if not os.path.exists(file_name):
-            print(file_name, "does not exist, stop.")
-            break
-        fin = open(file_name, "r", encoding="utf-8")
-        # encoder use the tokenizer to encode data
-        encoder = Encoder(args)
+    file_name = os.path.join(args.picl_data_dir, "{}".format(args.picl_data_name))
+    fin = open(file_name, "r", encoding="utf-8")
+    # encoder use the tokenizer to encode data
+    encoder = Encoder(args)
 
-        pool = multiprocessing.Pool(processes=args.data_process_workers, initializer=encoder.initializer)
-        encoded_docs = pool.imap_unordered(encoder.encode, enumerate(fin), chunksize=10)
-        proc_start = time.time()
-        total_bytes_processed = 0
+    pool = multiprocessing.Pool(processes=args.data_process_workers, initializer=encoder.initializer)
+    encoded_docs = pool.imap_unordered(encoder.encode, enumerate(fin), chunksize=10)
+    proc_start = time.time()
+    total_bytes_processed = 0
 
-        # it will also generate another small `idx_file` for saving meta information in order to decode `bin_file`.
-        bin_file = os.path.join(args.processed_output, f"picl_{ith}.bin")
-        idx_file = os.path.join(args.processed_output, f"picl_{ith}.idx")
+    # it will also generate another small `idx_file` for saving meta information in order to decode `bin_file`.
+    bin_file = os.path.join(args.processed_output, f"picl_0.bin")
+    idx_file = os.path.join(args.processed_output, f"picl_0.idx")
+    
+    binary_builder = make_builder(bin_file, impl="mmap", dtype=np.uint16)
+
+    # put tokenized data into binary_builder
+    nid = 0
+    o_docs_num = 0
+    map_ids = []
+    for lid, (oid, input_ids, bytes_processed) in enumerate(encoded_docs):
+        o_docs_num += 1
+        total_bytes_processed += bytes_processed
+        if input_ids is None:
+            continue
         
-        binary_builder = make_builder(bin_file, impl="mmap", dtype=np.uint16)
-
-        # put tokenized data into binary_builder
-        nid = 0
-        o_docs_num = 0
-        map_ids = []
-        for lid, (oid, input_ids, bytes_processed) in enumerate(encoded_docs):
-            o_docs_num += 1
-            total_bytes_processed += bytes_processed
-            if input_ids is None:
-                continue
-            
-            binary_builder.add_item(torch.IntTensor(input_ids))
-            map_ids.append((oid, nid))
-            
-            nid += 1
-            if lid % 10000 == 0:
-                current = time.time()
-                elapsed = current - proc_start
-                mbs = total_bytes_processed / elapsed / 1024 / 1024
-                print(f"{ith} Processed {lid} documents. {nid} instances.",
-                    f"({lid/elapsed} docs/s, {mbs} MB/s).",
-                    file=sys.stderr)
-
-        # finish compressing tokenized data into `bin_file`, and generate meta information into `idx_file`
-        binary_builder.finalize(idx_file)
-        o2n, n2o = get_np_map(map_ids, o_docs_num)
-        with h5py.File(os.path.join(args.processed_output, f"map.h5"), "w") as h5_f:
-            h5_f.create_dataset("map_o2n", data=o2n, dtype=np.int32, chunks=True)
-            h5_f.create_dataset("map_n2o", data=n2o, dtype=np.int32, chunks=True)
+        binary_builder.add_item(torch.IntTensor(input_ids))
+        map_ids.append((oid, nid))
         
-        # close multiproceessing mapping
-        pool.close()
+        nid += 1
+        if lid % 10000 == 0:
+            current = time.time()
+            elapsed = current - proc_start
+            mbs = total_bytes_processed / elapsed / 1024 / 1024
+            print(f"Processed {lid} documents. {nid} instances.",
+                f"({lid/elapsed} docs/s, {mbs} MB/s).",
+                file=sys.stderr)
+
+    # finish compressing tokenized data into `bin_file`, and generate meta information into `idx_file`
+    binary_builder.finalize(idx_file)
+    o2n, n2o = get_np_map(map_ids, o_docs_num)
+    with h5py.File(os.path.join(args.processed_output, f"map.h5"), "w") as h5_f:
+        h5_f.create_dataset("map_o2n", data=o2n, dtype=np.int32, chunks=True)
+        h5_f.create_dataset("map_n2o", data=n2o, dtype=np.int32, chunks=True)
+    
+    # close multiproceessing mapping
+    pool.close()
 
 
 def main():
@@ -100,8 +96,6 @@ def main():
     args = parser.parse_args()
 
     os.makedirs(args.processed_output, exist_ok=True)
-    
-    tokenizer = GPT2Tokenizer.from_pretrained(args.model_dir)
     
     process_data(args)
 

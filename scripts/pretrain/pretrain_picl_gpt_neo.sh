@@ -14,15 +14,15 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=${1}
-CKPT_NAME="gpt2-large"
-CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
+CKPT_NAME="gpt-neo"
+CKPT="${BASE_PATH}/checkpoints/${CKPT_NAME}/"
 # data
-CORPUS="100K_128"
+CORPUS="full_100"
 DATA_PREFIX="picl/${CORPUS}_TRAIN_p1_en1_hn4_s42_lr5e-05-bs64-G1_4000.pt_L2_filtered_0.0"
-LM_DATA_PREFIX="full_doc/${CORPUS}"
-DATA_DIR="${BASE_PATH}/pretrain_data/raw/${CORPUS}"
+LM_DATA_PREFIX="full_doc/"
+DATA_DIR="${BASE_PATH}/pretrain_data/paragraphs/${CORPUS}/gpt-j"
 IDX_DATA_DIR="${BASE_PATH}/pretrain_data/${DATA_PREFIX}"
-LM_DATA_DIR="${BASE_PATH}/pretrain_data/${LM_DATA_PREFIX}"
+LM_DATA_DIR="${BASE_PATH}/pretrain_data/${LM_DATA_PREFIX}/gpt-j"
 # hp
 BATCH_SIZE=1
 LR=0.000001
@@ -49,7 +49,8 @@ OPTS+=" --base-path ${BASE_PATH}"
 OPTS+=" --model-dir ${CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
-# OPTS+=" --gradient-checkpointing"
+OPTS+=" --model-type gpt-neo"
+OPTS+=" --gradient-checkpointing"
 # data
 OPTS+=" --picl-data-dir ${DATA_DIR}"
 OPTS+=" --picl-idx-data-dir ${IDX_DATA_DIR}"

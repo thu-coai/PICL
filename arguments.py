@@ -26,6 +26,7 @@ def add_model_config_args(parser: argparse.ArgumentParser):
     group.add_argument('--model-dir', type=str, help='model configuration file')
     group.add_argument("--ckpt-name", type=str)
     group.add_argument("--n-gpu", type=int, default=1)
+    group.add_argument("--model-type", type=str, default="gpt2")
     
     return parser
 

@@ -93,7 +93,7 @@ class ICLPretrainDataset(Dataset):
             else:
                 return self._get_icl(index)
         else:
-            raise NotImplementError()
+            raise NotImplementedError()
     
     def _get_lm(self, index):
         data = self.lm_ctx[index]
@@ -151,7 +151,8 @@ class ICLPretrainDataset(Dataset):
         input_len = len(input_ids)
         model_data["input_ids"][i][:input_len-1] = torch.tensor(input_ids[:-1], dtype=torch.long)
         model_data["attention_mask"][i][:input_len-1, :input_len-1] = torch.tril(torch.ones(input_len-1, input_len-1))
-        model_data["position_ids"][i][:input_len-1] = torch.arange(0, input_len-1, dtype=torch.long)
+        if self.args.model_type in ["gpt2"]:
+            model_data["position_ids"][i][:input_len-1] = torch.arange(0, input_len-1, dtype=torch.long)
         if self.args.icl_sup == "all_target":
             no_model_data["label"][i][:input_len-1] = torch.tensor(input_ids[1:], dtype=torch.long)
             no_model_data["loss_mask"][i][:input_len-1] = 1.0
@@ -168,7 +169,8 @@ class ICLPretrainDataset(Dataset):
         input_len = len(input_ids)
         model_data["input_ids"][i][:input_len-1] = torch.tensor(input_ids[:-1], dtype=torch.long)
         model_data["attention_mask"][i][:input_len-1, :input_len-1] = torch.tril(torch.ones(input_len-1, input_len-1))
-        model_data["position_ids"][i][:input_len-1] = torch.arange(0, input_len-1, dtype=torch.long)
+        if self.args.model_type in ["gpt2"]:
+            model_data["position_ids"][i][:input_len-1] = torch.arange(0, input_len-1, dtype=torch.long)
         no_model_data["label"][i][:input_len-1] = torch.tensor(input_ids[1:], dtype=torch.long)
         no_model_data["loss_mask"][i][:input_len-1] = 1.0
 
@@ -180,8 +182,10 @@ class ICLPretrainDataset(Dataset):
         model_data = {
             "input_ids": torch.ones(bs, max_length, dtype=torch.long) * self.pad_id,
             "attention_mask": torch.zeros(bs, max_length, max_length),
-            "position_ids": torch.zeros(bs, max_length, dtype=torch.long),
         }
+        if self.args.model_type in ["gpt2"]:
+            model_data["position_ids"] = torch.zeros(bs, max_length, dtype=torch.long)
+        
         no_model_data = {
             "label": torch.ones(bs, max_length, dtype=torch.long) * -100,
             "loss_mask": torch.zeros(bs, max_length)
@@ -201,8 +205,10 @@ class ICLPretrainDataset(Dataset):
         model_data = {
             "input_ids": torch.ones(bs, self.max_length, dtype=torch.long) * self.pad_id,
             "attention_mask": torch.zeros(bs, self.max_length, self.max_length),
-            "position_ids": torch.zeros(bs, self.max_length, dtype=torch.long),
         }
+        if self.args.model_type in ["gpt2"]:
+            model_data["position_ids"] = torch.zeros(bs, self.max_length, dtype=torch.long)
+       
         no_model_data = {
             "label": torch.ones(bs, self.max_length, dtype=torch.long) * -100,
             "loss_mask": torch.zeros(bs, self.max_length)
@@ -216,7 +222,8 @@ class ICLPretrainDataset(Dataset):
             s = 0
             for ids in tmp_input_ids:
                 model_data["attention_mask"][i][s:s+len(ids)-1, s:s+len(ids)-1] = torch.tril(torch.ones(len(ids)-1, len(ids)-1))
-                model_data["position_ids"][i][s:s+len(ids)-1] = torch.arange(0, len(ids)-1, dtype=torch.long)
+                if self.args.model_type in ["gpt2"]:
+                    model_data["position_ids"][i][s:s+len(ids)-1] = torch.arange(0, len(ids)-1, dtype=torch.long)
                 no_model_data["label"][i][s:s+len(ids)-1] = torch.tensor(ids[1:], dtype=torch.long)
                 no_model_data["loss_mask"][i][s:s+len(ids)-1] = 1.0
                 s += len(ids)

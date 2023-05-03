@@ -8,7 +8,8 @@ import torch.nn as nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
-from apex.optimizers import FusedAdam as Adam
+# from apex.optimizers import FusedAdam as Adam
+from torch.optim import AdamW
 import deepspeed
 
 import random
@@ -48,7 +49,7 @@ def get_optimizer(args, model):
     param_groups = get_optimizer_params(args, model)
 
     # Use FusedAdam.
-    optimizer = Adam(param_groups, lr=args.lr, weight_decay=args.weight_decay)
+    optimizer = AdamW(param_groups, lr=args.lr, weight_decay=args.weight_decay)
     print_rank(f'Optimizer = {optimizer.__class__.__name__}')
     return optimizer
 
@@ -173,7 +174,7 @@ def prepare_dataset(args, tokenizer, rank, world_size):
     return data
 
 
-def pretrain(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, optimizer: Adam, lr_scheduler, dataset, device):
+def pretrain(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, optimizer: AdamW, lr_scheduler, dataset, device):
     print_rank("Start Pre-training")
     loss_func = nn.CrossEntropyLoss()
 
@@ -395,5 +396,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print(os.environ["CODE_BASE"])
     main()

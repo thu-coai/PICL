@@ -127,7 +127,7 @@ def main():
     fin.close()
     
     print("Shuffling")
-    os.system("sort {} | uniq | shuf > {}".format(os.path.join(output_path, "processed_dup"), os.path.join(output_path, "processed_0")))
+    os.system("sort {} | uniq | shuf > {}".format(os.path.join(output_path, "paragraphs_dup"), os.path.join(output_path, "paragraphs")))
 
 if __name__ == '__main__':
     main()
