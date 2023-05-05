@@ -320,7 +320,6 @@ data
 data_log
 debug
 checkpoints
-*.png
 playground
 
 logs
