@@ -1,4 +1,12 @@
-# PICL: Pre-Training to Learn in Context
+# Pre-Training to Learn in Context
+
+This repository contains the code of our ACL2023 paper:
+
+> [Pre-Training to Learn in Context]()
+
+In this work, we propose PICL (\textbf{P}re-training for \textbf{I}n-\textbf{C}ontext \textbf{L}earning), a framework to enhance the language models' in-context learning ability by pre-training the model on a large collection of ``intrinsic tasks'' in the general plain-text corpus using the simple language modeling objective. PICL encourages the model to infer and perform tasks by conditioning on the contexts while maintaining task generalization of pre-trained models. 
+
+![PICL](figures/method.png "PICL Framework")
 
 ## 1 Install
 ```bash
@@ -82,7 +90,7 @@ Step-by-step runing. `${BASE_PATH}` is the path of the directory of this project
 # 4 Citation
 ```
 @inproceedings{gu2023picl,
-  title={Pre-Train to Learn in Context},
+  title={Pre-Training to Learn in Context},
   author={Gu, Yuxian and Dong, Li and Wei, Furu and Huang, Minlie},
   booktitle={Proceedings of ACL},
   year={2023}
