@@ -16,7 +16,7 @@ BATCH_SIZE=128
 SEED=10
 MAX_LEN=256
 # runtime
-CKPT=${4-"TRAIN_p1_en1_hn4_s42/lr5e-05-bs64-G1/4000.pt"}
+CKPT=${4-"TRAIN_p1_en1_hn1_s42/lr5e-05-bs64-G1/4375.pt"}
 LOAD_PATH="${WORKING_DIR}/results/retriever/${CKPT}"
 SAVE_PATH="${WORKING_DIR}/pretrain_data/retrieval_results/"
 

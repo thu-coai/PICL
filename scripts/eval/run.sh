@@ -1,4 +1,5 @@
-PATH_TO_CKPT="xxx" # path to your ckpt in results/
+PATH_TO_CKPT="results/picl-large" # path to your ckpt in results/
+BASE_PATH=${1}
 
 for seed in 10 20 30 40 50
 do

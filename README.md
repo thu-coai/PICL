@@ -10,10 +10,6 @@ conda install faiss-gpu -c pytorch
 # install transformers & promptsource
 pip3 install -e transformers
 pip3 install -e promptsource
-# install apex
-git clone https://github.com/NVIDIA/apex apex
-cd apex
-pip3 install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 ```
 
 ## 2 Prepare Corpus
@@ -40,18 +36,18 @@ Step-by-step runing. `${BASE_PATH}` is the path of the directory of this project
     ```
 + Process full document data.
     ```bash
-    bash scripts/tools/process_full_doc_data.sh ${BASE_PATH}
+    bash scripts/tools/process_full_doc_data_gpt2.sh ${BASE_PATH}
     ```
 + Tokenize paragraphs in corpus.
     ```bash
-    bash scripts/tools/process_picl_data.sh ${BASE_PATH}
+    bash scripts/tools/process_picl_data_gpt2.sh ${BASE_PATH}
     ```
 ### 3.2 Retrival
-+ Process training data for retriever. Construct hard negatives.
++ Process training data for retriever. Construct hard negatives. The preprocessed data can be downloaded from this [link](https://drive.google.com/file/d/1MMNLT44Qqktxn_-rgVbPVtn8ewFYVGDr/view?usp=share_link).
     ```bash
     python3 tools/process_retriever_train_data.py --save retriever_data --data-names TRAIN
     ```
-+ Train the retriever.
++ Train the retriever. The `train.jsonl` and `valid.jsonl` data should be put in `retriever_data/TRAIN/p1_en1_hn1_s42/merge`. The trained retriever can be downloaded from this [link](https://drive.google.com/drive/folders/1A7gW9tNJK9QIg0y_Kvsod0i8wgvhPKq8?usp=share_link)
     ```bash
     bash scripts/retriever/train.sh ${BASE_PATH}
     ```
@@ -71,14 +67,24 @@ Step-by-step runing. `${BASE_PATH}` is the path of the directory of this project
     ```
 
 ### 3.4 Pre-train
-+ Pre-train the LM with PICL.
++ Pre-train the LM with PICL. The pre-trained models can be downloaded from this [link](https://drive.google.com/drive/folders/1RVl560T1KyKCVnHb42RX5xbC9hPPb6VS?usp=share_link).
     ```bash
-    bash scripts/pretrain/pretrain_picl.sh ${BASE_PATH}
+    bash scripts/pretrain/pretrain_picl_gpt2_large.sh ${BASE_PATH}
     ```
 
 ### 3.5 Evaluation
-+ Evaluate the trained model on text classification datasets and super-natural instructions.
++ Evaluate the trained model on text classification datasets and super-natural instructions. The evaluation data can be downloaded from this [link](https://drive.google.com/drive/folders/18R0l7SF8DfqwZzIcaqqfKx0wSEZ5-T5t?usp=share_link).
     ```bash
     bash scripts/eval/eval_cls.sh ${BASE_PATH}
     bash scripts/eval/eval_inst.sh ${BASE_PATH}
     ```
+
+# 4 Citation
+```
+@inproceedings{gu2023picl,
+  title={Pre-Train to Learn in Context},
+  author={Gu, Yuxian and Dong, Li and Wei, Furu and Huang, Minlie},
+  booktitle={Proceedings of ACL},
+  year={2023}
+}
+```

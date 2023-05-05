@@ -10,7 +10,7 @@ MASTER_PORT=${3-2010}
 MODEL_NAME="roberta-base"
 MODEL_DIR="${WORKING_DIR}/checkpoints/${MODEL_NAME}/"
 # data
-DATA_NAME="${4-TRAIN/p1_en1_hn4_s42}"
+DATA_NAME="${4-TRAIN/p1_en1_hn1_s42}"
 DATA_DIR="${WORKING_DIR}/retriever_data/${DATA_NAME}/merge"
 # hp
 BATCH_SIZE=64

@@ -73,7 +73,7 @@ class RetrieverDataset(Dataset):
             with open(cache_path, "rb") as f:
                 self.data = pickle.load(f)
         else:
-            if args.load_data_workers <= 0:
+            if args.data_process_workers <= 0:
                 self.data = self.load_data(path)
                 with open(cache_path, "wb") as f:
                     pickle.dump(self.data, f)
