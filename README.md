@@ -2,7 +2,7 @@
 
 This repository contains the code of our ACL2023 paper:
 
-> Pre-Training to Learn in Context
+> [Pre-Training to Learn in Context](https://arxiv.org/pdf/2305.09137.pdf)
 
 In this work, we propose PICL (**P**re-training for **I**n-**C**ontext **L**earning), a framework to enhance the language models' in-context learning ability by pre-training the model on a large collection of ``intrinsic tasks'' in the general plain-text corpus using the simple language modeling objective. PICL encourages the model to infer and perform tasks by conditioning on the contexts while maintaining task generalization of pre-trained models. 
 
