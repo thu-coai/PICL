@@ -9,7 +9,7 @@ MASTER_PORT=${3-2012}
 # model
 MODEL_DIR="${WORKING_DIR}/checkpoints/roberta-base/"
 # data
-DATA_DIR="${WORKING_DIR}/pretrain_data/raw"
+DATA_DIR="${WORKING_DIR}/pretrain_data/"
 DATA_NAME=${5-"100K_128"}
 # hp
 BATCH_SIZE=128

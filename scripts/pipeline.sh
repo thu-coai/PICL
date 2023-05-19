@@ -16,7 +16,7 @@ python3 tools/process_retriever_train_data.py --save retriever_data --data-names
 bash scripts/retriever/train.sh ${BASE_PATH}
 
 # Get encoded paragraphs.
-bash scripts/retriever/infer.sh ${BASE_PATH}
+bash scripts/retriever/infer.sh ${BASE_PATH} # uses 4 gpus by default
 
 # Search for paragraphs that share the same intrinsic tasks.
 bash scripts/retriever/search.sh ${BASE_PATH}

@@ -17,10 +17,10 @@ BASE_PATH=${1}
 CKPT_NAME="gpt2-xlarge"
 CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
-CORPUS="full_100"
-DATA_PREFIX="picl/${CORPUS}_TRAIN_p1_en1_hn4_s42_lr5e-05-bs64-G1_4000.pt_L2_filtered_0.0"
+CORPUS="100K_128"
+DATA_PREFIX="picl/${CORPUS}_TRAIN_p1_en1_hn1_s42_lr5e-05-bs64-G1_4375.pt_L2_filtered_0.0"
 LM_DATA_PREFIX="full_doc/"
-DATA_DIR="${BASE_PATH}/pretrain_data/paragraphs/${CORPUS}/gpt2"
+DATA_DIR="${BASE_PATH}/pretrain_data/${CORPUS}/gpt2"
 IDX_DATA_DIR="${BASE_PATH}/pretrain_data/${DATA_PREFIX}"
 LM_DATA_DIR="${BASE_PATH}/pretrain_data/${LM_DATA_PREFIX}/gpt2"
 # hp

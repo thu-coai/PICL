@@ -355,7 +355,7 @@ def main():
         train(args, tokenizer, model, optimizer, scheduler, train_dataset, valid_dataset, train_dataloader, valid_dataloader, device)
     
     if args.do_infer:            
-        infer_dataset = RetrieverInferDataset(args, "infer", os.path.join(args.data_dir, args.data_names, "processed_0"), tokenizer)
+        infer_dataset = RetrieverInferDataset(args, "infer", os.path.join(args.data_dir, args.data_names, "paragraphs"), tokenizer)
         
         model = RetrieverModel(args.model_dir, len(tokenizer), args.share_model, args.pool_type)
         if args.load is not None:

@@ -87,7 +87,7 @@ def main():
     os.makedirs(output_path, exist_ok=True)
     
     fin = open(args.raw_input, 'r', encoding="utf-8")
-    fout = open(os.path.join(output_path, "processed_dup"), "w", encoding="utf-8")
+    fout = open(os.path.join(output_path, "paragraphs_dup"), "w", encoding="utf-8")
 
     encoder = Encoder(args)
     pool = multiprocessing.Pool(args.data_process_workers, initializer=encoder.initializer)
