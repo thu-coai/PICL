@@ -99,6 +99,7 @@ def add_data_args(parser: argparse.ArgumentParser):
     
     group.add_argument("--raw-input", type=str, default=None)
     group.add_argument("--processed-output", type=str, default=None)
+    group.add_argument("--bin-file-index", type=int, default=0)
     
     return parser
 

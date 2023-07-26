@@ -13,7 +13,7 @@ In this work, we propose PICL (**P**re-training for **I**n-**C**ontext **L**earn
 # setup environment with conda
 conda create -n picl python=3.8
 # install basic packages
-pip3 install -r requirements
+pip3 install -r requirements.txt
 conda install faiss-gpu -c pytorch
 # install transformers & promptsource
 pip3 install -e transformers
@@ -42,14 +42,35 @@ Step-by-step runing. `${BASE_PATH}` is the path of the directory of this project
     ```bash
     bash scripts/tools/process_corpus.sh
     ```
-+ Process full document data.
++ Process full document data. The scripts will generate `.bin` and `.idx` files.
     ```bash
     bash scripts/tools/process_full_doc_data_gpt2.sh ${BASE_PATH}
     ```
-+ Tokenize paragraphs in corpus.
++ Tokenize paragraphs in corpus. The scripts will generate `.bin` and `.idx` files.
     ```bash
     bash scripts/tools/process_picl_data_gpt2.sh ${BASE_PATH}
     ```
+
+#### NOTE
+Since the corpus is large, the `.bin` file of full document data will be about 29G and the paragraph data will be about 13G. The data processing may take long, and there may be unexpected problems that stuck the process (like running out of CPU memories). To handle this issue, you can split the `merge.txt` file to multiple files like:
+```bash
+split -C 1000M merge.txt
+```
+And then, you can process the split files one by one (by setting different `picl-data-name` and `bin-file-index` in `process_full_doc_data_gpt2.sh`), each takes less time and has less risk of running into problems. Assume that you have generated two (`.bin`, `.idx`) pairs:
+```
+train_lm_1.bin
+train_lm_1.idx
+train_lm_2.bin
+train_lm_2.idx
+```
+You can finally merge them by runing
+```bash
+bash scripts/tools/merge_bin_files.sh ${BASE_PATH}
+```
+which will merge the two pairs into `train_lm_0.bin` and `train_lm_0.idx`.
+
+We are still working on releasing the processed data to HuggingFace.
+
 ### 3.2 Retrival
 + Process training data for retriever. Construct hard negatives. The preprocessed data can be downloaded from this [link](https://drive.google.com/file/d/1MMNLT44Qqktxn_-rgVbPVtn8ewFYVGDr/view?usp=share_link).
     ```bash

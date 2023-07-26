@@ -38,11 +38,11 @@ def process_data(args):
     total_bytes_processed = 0
 
     # it will also generate another small `idx_file` for saving meta information in order to decode `bin_file`.
-    train_bin_file = os.path.join(args.processed_output, f"train_lm_0.bin")
-    train_idx_file = os.path.join(args.processed_output, f"train_lm_0.idx")
+    train_bin_file = os.path.join(args.processed_output, f"train_lm_{args.bin_file_index}.bin")
+    train_idx_file = os.path.join(args.processed_output, f"train_lm_{args.bin_file_index}.idx")
 
-    valid_bin_file = os.path.join(args.processed_output, f"valid_lm_0.bin")
-    valid_idx_file = os.path.join(args.processed_output, f"valid_lm_0.idx")
+    valid_bin_file = os.path.join(args.processed_output, f"valid_lm_{args.bin_file_index}.bin")
+    valid_idx_file = os.path.join(args.processed_output, f"valid_lm_{args.bin_file_index}.idx")
 
     train_binary_builder = make_builder(train_bin_file, impl="mmap", dtype=np.uint16)
     valid_binary_builder = make_builder(valid_bin_file, impl="mmap", dtype=np.uint16)
