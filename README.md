@@ -20,7 +20,7 @@ pip3 install -e transformers
 pip3 install -e promptsource
 ```
 
-## 2 Prepare Corpus
+## 2 Prepare Plain-Text Corpus
 Download [OpenWebText](https://huggingface.co/datasets/openwebtext), [Wikicorpus](https://huggingface.co/datasets/wikicorpus), and [Bookcorpus](https://huggingface.co/datasets/bookcorpus). Run `tools/prepare_raw_data.py` to get all full_documents and merge them:
 ```bash
 python3 tools/prepare_raw_data.py /PATH/TO/openwebtext pretrain_data/raw/openwebtext.txt
@@ -31,13 +31,94 @@ shuf -o pretrain_data/raw/merge_no_shuf.txt pretrain_data/raw/merge.txt
 ```
 The "\n" tokens in full documents are replace by a special token "<@x(x!>" such that each document occupy a single line in the file.
 
-## 3 Run
+## 3 Run the Pipeline
 Run the entire pipeline in a toy setting (corpus size = 100K) with
 ```
 bash pipeline.sh
 ```
-Step-by-step runing. `${BASE_PATH}` is the path of the directory of this project:
-### 3.1 Corpus Processing
+`${BASE_PATH}` is the path of the directory of this project. 
+
+The details of each step in the pipeline are shown in the following sections.
+
+## 4 Construct PICL Data
+
+We release the constructed PICL data in this [link](https://huggingface.co/t1101675/PICL/tree/main/pretrain_data).
+
+You can check the same-intrinsic-task paragraphs by running `python3 check_picl_data.py` and then entering an interger index to pick a query and the retrieved paragraphs:
+<details><summary><b>Latex Equation Translation</b></summary>
+
+```
+Input Paragraph Index >>>11156                                                         
+##########  Query  ##########
+ω p = I s ω s I p cos ⁡ ( α ) {\displaystyle {\boldsymbol {\omega }}_{\mathrm {p} }={\frac {{\boldsymbol {I}}_{\mathrm {s} }{\boldsymbol {\omega }}_{\mathrm {s} }}{{\boldsymbo
+l {I}}_{\mathrm {p} }\cos({\boldsymbol {\alpha }})}}}
+
+##########  Retrieved Paragraph #1  ##########
+τ b ∗ = τ b ( ρ s − ρ f ) ( g ) ( D ) {\displaystyle \tau _{b}*={\frac {\tau _{b}}{(\rho _{s}-\rho _{f})(g)(D)}}}
+
+
+##########  Retrieved Paragraph #2  ##########
+M H ≤ ℏ c 3 8 π G k B T u {\displaystyle M_{\mathrm {H} }\leq {\frac {\hbar c^{3}}{8\pi Gk_{\mathrm {B} }T_{\mathrm {u} }}}}
+
+...
+```
+</details>
+
+
+<details><summary><b>Question Ansering</b></summary>
+
+```
+##########  Query  ##########
+Question: Where would a gnarly off-road racer like Tanner Foust meet up with a frightened five-year-old child with leukemia? Answer: In a hospital, of course!
+
+
+##########  Retrieved Paragraph #1  ##########
+Question: What do a siren, an in-wall light switch, a sleep sensing iPhone dock, and a flood detector have in common? Answer: They are all SmartThings!
+
+
+##########  Retrieved Paragraph #2  ##########
+Question: Where do you find a one legged dog? Answer: Where you left it.
+...
+```
+</details>
+
+<br>
+
+Here are some indices for interesting paragraphs. Try it out!
+
+<details><summary><b>Indices</b></summary>
+
+```
+0
+8
+109
+1000
+4645
+5384
+9473
+11156
+11969
+12231
+17838
+17849
+28844
+28845
+37577
+40119
+59996
+85034
+90096
+97616
+```
+</details>
+
+<br>
+
+You can also constructe the PICL data from scratch following the instructions below.
+
+
+### 4.1 Preprocessing and Toknization
+Tokenize and store full documents and paragraphs into binary files.
 + Split full documents into paragraphs.
     ```bash
     bash scripts/tools/process_corpus.sh
@@ -69,14 +150,12 @@ bash scripts/tools/merge_bin_files.sh ${BASE_PATH}
 ```
 which will merge the two pairs into `train_lm_0.bin` and `train_lm_0.idx`.
 
-We are still working on releasing the processed data to HuggingFace.
-
-### 3.2 Retrival
-+ Process training data for retriever. Construct hard negatives. The preprocessed data can be downloaded from this [link](https://drive.google.com/file/d/1MMNLT44Qqktxn_-rgVbPVtn8ewFYVGDr/view?usp=share_link).
+### 4.2 Retrival
++ Process training data for retriever. Construct hard negatives. The preprocessed data can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/retriever_data).
     ```bash
     python3 tools/process_retriever_train_data.py --save retriever_data --data-names TRAIN
     ```
-+ Train the retriever. The `train.jsonl` and `valid.jsonl` data should be put in `retriever_data/TRAIN/p1_en1_hn1_s42/merge`. The trained retriever can be downloaded from this [link](https://drive.google.com/drive/folders/1A7gW9tNJK9QIg0y_Kvsod0i8wgvhPKq8?usp=share_link)
++ Train the retriever. The `train.jsonl` and `valid.jsonl` data should be put in `retriever_data/TRAIN/p1_en1_hn1_s42/merge`. The trained retriever can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/results/retriever).
     ```bash
     bash scripts/retriever/train.sh ${BASE_PATH}
     ```
@@ -89,26 +168,26 @@ We are still working on releasing the processed data to HuggingFace.
     bash scripts/retriever/search.sh ${BASE_PATH}
     ```
 
-### 3.3 Filter
+### 4.2 Filter
 + Filter out non-informative samples.
     ```bash
     bash scripts/filter/filter.sh ${BASE_PATH}
     ```
 
-### 3.4 Pre-train
-+ Pre-train the LM with PICL. The pre-trained models can be downloaded from this [link](https://drive.google.com/drive/folders/1RVl560T1KyKCVnHb42RX5xbC9hPPb6VS?usp=share_link).
+## 5 Pre-train
++ Pre-train the LM with PICL. The pre-trained models can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/results/picl).
     ```bash
     bash scripts/pretrain/pretrain_picl_gpt2_large.sh ${BASE_PATH}
     ```
 
-### 3.5 Evaluation
-+ Evaluate the trained model on text classification datasets and super-natural instructions. The evaluation data can be downloaded from this [link](https://drive.google.com/drive/folders/18R0l7SF8DfqwZzIcaqqfKx0wSEZ5-T5t?usp=share_link).
+## 6 Evaluation
++ Evaluate the trained model on text classification datasets and super-natural instructions. The evaluation data can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/data).
     ```bash
     bash scripts/eval/eval_cls.sh ${BASE_PATH}
     bash scripts/eval/eval_inst.sh ${BASE_PATH}
     ```
 
-## 4 Citation
+## 7 Citation
 ```
 @inproceedings{gu2023picl,
   title={Pre-Training to Learn in Context},
