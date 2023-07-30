@@ -82,8 +82,6 @@ Question: Where do you find a one legged dog? Answer: Where you left it.
 ```
 </details>
 
-<br>
-
 Here are some indices for interesting paragraphs. Try it out!
 
 <details><summary><b>Indices</b></summary>
@@ -112,10 +110,7 @@ Here are some indices for interesting paragraphs. Try it out!
 ```
 </details>
 
-<br>
-
 You can also constructe the PICL data from scratch following the instructions below.
-
 
 ### 4.1 Preprocessing and Toknization
 Tokenize and store full documents and paragraphs into binary files.
