@@ -3,7 +3,7 @@ import random
 
 std2all = {
     # standard -> all
-    "ag_news_o": {
+    "ag_news": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -12,7 +12,7 @@ std2all = {
             ("label", "{{ range(0,4) | random }}")
         ]
     },
-    "amazon_polarity_o": {
+    "amazon_polarity": {
         "info": {
             "judge": lambda x: x["context"] >= 2
         },
@@ -22,7 +22,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}"),
         ]
     },
-    "anli_r1_o": {
+    "anli_r1": {
         "info": {
             "judge": lambda x: x["context"] >= 3
         },
@@ -33,7 +33,7 @@ std2all = {
             ("label", "{{ range(0,3) | random }}")
         ]
     },
-    "art_o": {
+    "art": {
         "info": {
             "judge": lambda x: x["context"] >= 2 and x["options"] >= 4
         },
@@ -45,7 +45,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}")
         ]
     },
-    "circa_o": {
+    "circa": {
         "info": {
             "judge": lambda x: x["context"] >= 3 and (x["context"] >= 4 or x["question"] >= 1)
         },
@@ -59,7 +59,7 @@ std2all = {
             # ("judgements", None)
         ]
     },
-    "cosmos_qa_o": {
+    "cosmos_qa": {
         "info": {
             "judge": lambda x: x["options"] >= 4 and (x["context"] >= 2 or x["question"] >= 1)
         },
@@ -73,7 +73,7 @@ std2all = {
             ("label", "{{ range(0,4) | random }}")
         ]
     },
-    "dbpedia_14_o": {
+    "dbpedia_14": {
         "info": {
             "judge": lambda x: x["context"] >= 2
         },
@@ -83,7 +83,7 @@ std2all = {
             ("label", "{{ range(0,14) | random }}"),
         ]
     },
-    "discovery_o": {
+    "discovery": {
         "info": {
             "judge": lambda x: x["context"] >= 2  
         },
@@ -93,7 +93,7 @@ std2all = {
             ("label", "{{ range(0,173) | random }}")
         ]
     },
-    "emo_o": {
+    "emo": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -102,7 +102,7 @@ std2all = {
             ("label", "{{ range(0,4) | random }}")
         ]
     },
-    "emotion_o": {
+    "emotion": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -111,13 +111,13 @@ std2all = {
             ("label", "{{ range(0,6) | random }}")
         ]
     },
-    "freebase_qa_o": {
+    "freebase_qa": {
         "info": {
             "judge": lambda x: False # NOTE: no neg
         },
         "rules": []
     },
-    "gigaword_o": {
+    "gigaword": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -126,7 +126,7 @@ std2all = {
             ("summary", "{{ answer[0] }}")
         ]
     },
-    "google_wellformed_query_o": {
+    "google_wellformed_query": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -135,7 +135,7 @@ std2all = {
             ("rating", str(random.random()))
         ]
     },
-    "hellaswag_o": {
+    "hellaswag": {
         "info": {
             "judge": lambda x: x["options"] >= 4 and x["context"] >= 3
         },
@@ -153,7 +153,7 @@ std2all = {
             ("label", "{{ range(0,4) | random }}"),
             # active_label, split, split_type
     ]},
-    "imdb_o": {
+    "imdb": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -162,7 +162,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}"),
         ]
     },
-    "liar_o": {
+    "liar": {
         "info": {
             "judge": lambda x: x["context"] >= 4
         },
@@ -175,7 +175,7 @@ std2all = {
             ("label", "{{ range(0,6) | random }}")
         ]
     },
-    "paws_labeled_final_o": {
+    "paws_labeled_final": {
         "info": {
             "judge": lambda x: x["context"] >= 2  
         },
@@ -185,7 +185,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}")
         ]
     },
-    "piqa_o": {
+    "piqa": {
         "info": {
             "judge": lambda x: x["options"] >= 2  
         },
@@ -196,7 +196,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}")
         ]
     },
-    "quail_o": {
+    "quail": {
         "info": {
             "judge": lambda x: x["options"] >= 4 and (x["context"] >= 2 or x["question"] >= 1)
         },
@@ -213,7 +213,7 @@ std2all = {
             # domain, metadata, question_type
         ]
     },
-    "quoref_o": {
+    "quoref": {
         "info": {
             "judge": lambda x: x["context"] >= 3 or (x["context"] >= 2 and x["question"] >= 1)  
         },
@@ -224,7 +224,7 @@ std2all = {
             ("answers.text", ["{{ answer[0] }}"])
         ]
     },
-    "ropes_o": {
+    "ropes": {
         "info": {
             "judge": lambda x: x["context"] >= 2 and (x["context"] >= 3 or x["question"] >= 1)
         },
@@ -235,7 +235,7 @@ std2all = {
             ("answers.text", ["{{ answer[0] }}"])
         ]
     },
-    "sciq_o": {
+    "sciq": {
         "info": {
             "judge": lambda x: x["options"] >= 4 and (x["context"] >= 2 or x["question"] >= 1)  
         },
@@ -248,7 +248,7 @@ std2all = {
             ("correct_answer", "{{ answer[0] }}")
         ]
     },
-    "scitail_o": {
+    "scitail": {
         "info": {
             "judge": lambda x: x["context"] >= 2
         },
@@ -258,7 +258,7 @@ std2all = {
             ("gold_label", "{{ answer[0] }}")
         ]
     },
-    "social_i_qa_o": {
+    "social_i_qa": {
         "info": {
             "judge": lambda x: x["options"] >= 3 and (x["context"] >= 2 or x["question"] >= 1)
         },
@@ -271,7 +271,7 @@ std2all = {
             ("label", "{{ range(1,4) | random }}")
         ]
     },
-    "swag_o": {
+    "swag": {
         "info": {
             "judge": lambda x: x["context"] >= 2 and x["options"] >= 4
         },
@@ -286,13 +286,13 @@ std2all = {
             # startphrase
         ]
     },
-    "tab_fact_o": {
+    "tab_fact": {
         "info": {
             "judge": lambda x: False # NOTE: no neg
         },
         "rules": []
     },
-    "wiki_qa_o": {
+    "wiki_qa": {
         "info": {
             "judge": lambda x: x["context"] >= 3 or (x["context"] >= 2 and x["question"] >= 1)
         },
@@ -303,7 +303,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}")
         ]
     },
-    "wiqa_o": {
+    "wiqa": {
         "info": {
             "judge": lambda x: False # NOTE: no neg
         },
@@ -313,7 +313,7 @@ std2all = {
             ("answer_label", "answer")
         ]
     },
-    "xsum_o": {
+    "xsum": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -322,7 +322,7 @@ std2all = {
             ("summary", "{{ answer[0] }}")
         ]
     },
-    "yahoo_answers_topics_o": {
+    "yahoo_answers_topics": {
         "info": {
             "judge": lambda x: x["context"] >= 2
         },
@@ -333,7 +333,7 @@ std2all = {
             ("best_answer", "{{ answer[0] }}")
         ]
     },
-    "yelp_polarity_o": {
+    "yelp_polarity": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },
@@ -342,7 +342,7 @@ std2all = {
             ("label", "{{ range(0,2) | random }}"),
         ]
     },
-    "yelp_review_full_o": {
+    "yelp_review_full": {
         "info": {
             "judge": lambda x: x["context"] > 0
         },

@@ -1,6 +1,6 @@
 all2std = {
     # all -> standard
-    "ag_news_o": {
+    "ag_news": {
         "info": {
             "context": 1, "question": 0, "options": 4, "label": 1
         },
@@ -10,7 +10,7 @@ all2std = {
             ("{{ label | int }}", "label")
         ]
     },
-    "amazon_polarity_o": {
+    "amazon_polarity": {
         "info": {
             "context": 2, "question": 0, "options": 2, "label": 1
         },
@@ -21,7 +21,7 @@ all2std = {
             ("{{ label }}", "label"),
         ]
     },
-    "anli_r1_o": {
+    "anli_r1": {
         "info": {
             "context": 3, "question": 0, "options": 3, "label": 1
         },
@@ -33,7 +33,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "art_o": {
+    "art": {
         "info": {
             "context": 2, "question": 0, "options": 2, "label": 1
         },
@@ -45,7 +45,7 @@ all2std = {
             ("{{ label | int - 1 }}", "label")
         ]
     },
-    "circa_o": {
+    "circa": {
         "info": {
             "context": 3, "question": 1, "options": 8, "label": 2
         },
@@ -59,7 +59,7 @@ all2std = {
             ("{{ goldstandard2 }}", "label")
         ]
     },
-    "cosmos_qa_o": {
+    "cosmos_qa": {
         "info": {
             "context": 1, "question": 1, "options": 4, "label": 1
         },
@@ -73,7 +73,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "dbpedia_14_o": {
+    "dbpedia_14": {
         "info": {
             "context": 2, "question": 0, "options": 4, "label": 14
         },
@@ -84,7 +84,7 @@ all2std = {
             ("{{ label }}", "label"),
         ]
     },
-    "discovery_o": {
+    "discovery": {
         "info": {
             "context": 2, "question": 0, "options": 174, "label": 14
         },
@@ -95,7 +95,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "emo_o": {
+    "emo": {
         "info": {
             "context": 1, "question": 0, "options": 4, "label": 1
         },
@@ -105,7 +105,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "emotion_o": {
+    "emotion": {
         "info": {
             "context": 1, "question": 0, "options": 6, "label": 1
         },
@@ -115,13 +115,13 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "freebase_qa_o": {
+    "freebase_qa": {
         "info": {
             "context": -1, "question": -1, "options": -1, "label": -1
         },
         "rules": []
     },
-    "gigaword_o": {
+    "gigaword": {
         "info": {
             "context": 1, "question": 0, "options": 0, "label": 1
         },
@@ -130,7 +130,7 @@ all2std = {
             ("{{ summary }}", "answer")
         ]
     },
-    "google_wellformed_query_o": {
+    "google_wellformed_query": {
         "info": {
             "context": 1, "question": 0, "options": 2, "label": 1
         },
@@ -140,7 +140,7 @@ all2std = {
             ("{% if 0.5 < rating %}yes{% else %}no{% endif %}", "answer")
         }
     },
-    "hellaswag_o": {
+    "hellaswag": {
         "info": {
             "context": 1, "question": 0, "options": 4, "label": 1
         },
@@ -154,7 +154,7 @@ all2std = {
             ("{{ label | int }}", "label")
         ]
     },
-    "imdb_o": {
+    "imdb": {
         "info": {
             "context": 1, "question": 0, "options": 2, "label": 1
         },
@@ -164,7 +164,7 @@ all2std = {
             ("{{ label }}", "label"),
         ]
     },
-    "liar_o": {
+    "liar": {
         "info": {
             "context": 4, "question": -1, "options": 6, "label": 1
         },
@@ -177,7 +177,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "paws_labeled_final_o": {
+    "paws_labeled_final": {
         "info": {
             "context": 2, "question": 0, "options": 2, "label": 1
         },
@@ -188,7 +188,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "piqa_o": {
+    "piqa": {
         "info": {
             "context": 1, "question": 0, "options": 2, "label": 1
         },
@@ -199,7 +199,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "quail_o": {
+    "quail": {
         "info": {
             "context": 1, "question": 1, "options": 4, "label": 1
         },
@@ -213,7 +213,7 @@ all2std = {
             ("{{ correct_answer_id }}", "label")
         ]
     },
-    "quoref_o": {
+    "quoref": {
         "info": {
             "context": 1, "question": 1, "options": 0, "label": 1
         },
@@ -223,7 +223,7 @@ all2std = {
             ("{{ answers.text | choice }}", "answer")
         ]
     },
-    "ropes_o": {
+    "ropes": {
         "info": {
             "context": 2, "question": 0, "options": 0, "label": 1
         },
@@ -234,7 +234,7 @@ all2std = {
             ("{{ answers.text | choice }}", "answer")
         ]
     },
-    "sciq_o": {
+    "sciq": {
         "info": {
             "context": 1, "question": 1, "options": 4, "label": 1
         },
@@ -248,7 +248,7 @@ all2std = {
             ("{{ correct_answer }}", "answer")
         ]
     },
-    "scitail_o": {
+    "scitail": {
         "info": {
             "context": 2, "question": 0, "options": 2, "label": 1
         },
@@ -259,7 +259,7 @@ all2std = {
             ("{{ gold_label }}", "answer")
         ]
     },
-    "social_i_qa_o": {
+    "social_i_qa": {
         "info": {
             "context": 1, "question": 1, "options": 3, "label": 1
         },
@@ -272,7 +272,7 @@ all2std = {
             ("{{ label | int - 1 }}", "label")
         ]
     },
-    "swag_o": {
+    "swag": {
         "info": {
             "context": 2, "question": 0, "options": 4, "label": 1
         },
@@ -286,13 +286,13 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "tab_fact_o": {
+    "tab_fact": {
         "info": {
             "context": -1, "question": -1, "options": -1, "label": -1
         },
         "rules": []
     },
-    "wiki_qa_o": {
+    "wiki_qa": {
         "info": {
             "context": 1, "question": 1, "options": 2, "label": 1
         },
@@ -303,7 +303,7 @@ all2std = {
             ("{{ label }}", "label")
         ]
     },
-    "wiqa_o": {
+    "wiqa": {
         "info": {
             "context": 1, "question": 1, "options": 3, "label": 1
         },
@@ -314,7 +314,7 @@ all2std = {
             ("{{ answer_label }}", "answer")
         ]
     },
-    "xsum_o": {
+    "xsum": {
         "info": {
             "context": 1, "question": 0, "options": 0, "label": 1
         },
@@ -323,7 +323,7 @@ all2std = {
             ("{{ summary }}", "answer")
         ]
     },
-    "yahoo_answers_topics_o": {
+    "yahoo_answers_topics": {
         "info": {
             "context": 2, "question": 0, "options": 10, "label": 1
         },
@@ -334,7 +334,7 @@ all2std = {
             ("{{ topic }}", "label")
         ]
     },
-    "yelp_polarity_o": {
+    "yelp_polarity": {
         "info": {
             "context": 1, "question": 0, "options": 2, "label": 1
         },
@@ -344,7 +344,7 @@ all2std = {
             ("{{ label }}", "label"),
         ]
     },
-    "yelp_review_full_o": {
+    "yelp_review_full": {
         "info": {
             "context": 1, "question": 0, "options": 5, "label": 1
         },
@@ -354,7 +354,7 @@ all2std = {
             ("{{ label }}", "label"),
         ]
     },
-    "cos_e": {
+    "cos": {
         "info": {
             "context": 1, "question": 1, "options": 5, "label": 1
         },

@@ -176,7 +176,7 @@ def get_all_data(all_data_names):
     datasets.disable_caching()
     all_data = {}
     collection = TemplateCollection()
-    for data_name in tqdm(all_data_names, desc="Constructing Data"):
+    for data_name in tqdm(all_data_names, desc="Getting Data"):
         print(data_name)
         config = DATA_CONFIG[data_name]
         data_files = {split: os.path.join(config.data_dir, f"{split}.jsonl") for split in ["train"]}
@@ -221,7 +221,7 @@ def construct_data(args, all_data_names, all_data, hard_neg_convertable):
     
     max_num = args.ret_train_num_per_prompt + args.ret_eval_num_per_prompt
     
-    for data_name in all_data_names:
+    for data_name in tqdm(all_data_names, desc="Constructing Data"):
         data = all_data[data_name]
         samples = data["samples"][args.ret_source_split].shuffle(seed=args.seed)
         templates = data["templates"]
@@ -333,8 +333,11 @@ def main():
 
     random.seed(args.seed)
     all_data_names = parse_data_names(args.data_names)
+
+    hard_neg_convertable = get_convertable_adjlist(all_data_names)
     
     all_data = get_all_data(all_data_names)
+    construct_data(args, all_data_names, all_data, hard_neg_convertable)
 
     merge_data(args, all_data_names, all_data)
     

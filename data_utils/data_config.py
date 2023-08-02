@@ -318,61 +318,61 @@ DATA_CONFIG = {
         data_dir=os.path.join(BASE_DATA_DIR, "cola/cache")
     ),
     # HR
-    "art_o": DatasetItem(
-        name=["art_origin", None],
+    "art": DatasetItem(
+        name=["art", None],
         data_dir=os.path.join(BASE_DATA_DIR, "art/cache"),
     ),
-    "circa_o": DatasetItem(
-        name=["circa_origin", None],
+    "circa": DatasetItem(
+        name=["circa", None],
         data_dir=os.path.join(BASE_DATA_DIR, "circa_fix/cache"),
         banned_prompt_train=["possible_qn", "question_declarative"]
     ),
-    "discovery_o": DatasetItem(
-        name=["discovery_origin", "discovery"],
+    "discovery": DatasetItem(
+        name=["discovery", "discovery"],
         data_dir=os.path.join(BASE_DATA_DIR, "discovery/cache")
     ),
-    "emo_o": DatasetItem(
-        name=["emo_origin", None],
+    "emo": DatasetItem(
+        name=["emo", None],
         data_dir=os.path.join(BASE_DATA_DIR, "emo/cache")
     ),
-    "emotion_o": DatasetItem(
-        name=["emotion_origin", None],
+    "emotion": DatasetItem(
+        name=["emotion", None],
         data_dir=os.path.join(BASE_DATA_DIR, "emotion/cache")
     ),
-    "freebase_qa_o": DatasetItem(
-        name=["freebase_qa_origin", None],
+    "freebase_qa": DatasetItem(
+        name=["freebase_qa", None],
         data_dir=os.path.join(BASE_DATA_DIR, "freebase_qa/cache")
     ), 
-    "google_wellformed_query_o": DatasetItem(
-        name=["google_wellformed_query_origin", None],
+    "google_wellformed_query": DatasetItem(
+        name=["google_wellformed_query", None],
         data_dir=os.path.join(BASE_DATA_DIR, "google_wellformed_query/cache")
     ),
-    "liar_o": DatasetItem(
-        name=["liar_origin", None],
+    "liar": DatasetItem(
+        name=["liar", None],
         data_dir=os.path.join(BASE_DATA_DIR, "liar/cache")
     ),
-    "piqa_o": DatasetItem(
-        name=["piqa_origin", None],
+    "piqa": DatasetItem(
+        name=["piqa", None],
         data_dir=os.path.join(BASE_DATA_DIR, "piqa/cache")
     ), 
-    "scitail_o": DatasetItem(
-        name=["scitail_origin", "snli_format"],
+    "scitail": DatasetItem(
+        name=["scitail", "snli_format"],
         data_dir=os.path.join(BASE_DATA_DIR, "scitail/cache/snli_format")
     ),
-    "swag_o": DatasetItem(
-        name=["swag_origin", "regular"],
+    "swag": DatasetItem(
+        name=["swag", "regular"],
         data_dir=os.path.join(BASE_DATA_DIR, "swag/cache/regular")
     ),
-    "tab_fact_o": DatasetItem(
-        name=["tab_fact_origin", "tab_fact"],
+    "tab_fact": DatasetItem(
+        name=["tab_fact", "tab_fact"],
         data_dir=os.path.join(BASE_DATA_DIR, "tab_fact/cache/tab_fact")
     ), 
-    "yahoo_answers_topics_o": DatasetItem(
-        name=["yahoo_answers_topics_origin", None],
+    "yahoo_answers_topics": DatasetItem(
+        name=["yahoo_answers_topics", None],
         data_dir=os.path.join(BASE_DATA_DIR, "yahoo_answers_topics/cache")
     ), 
-    "yelp_review_full_o" :DatasetItem(
-        name=["yelp_review_full_origin", None],
+    "yelp_review_full" :DatasetItem(
+        name=["yelp_review_full", None],
         data_dir=os.path.join(BASE_DATA_DIR, "yelp_full/cache")
     ),
     # evaluation
