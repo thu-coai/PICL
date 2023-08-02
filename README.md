@@ -146,7 +146,7 @@ bash scripts/tools/merge_bin_files.sh ${BASE_PATH}
 which will merge the two pairs into `train_lm_0.bin` and `train_lm_0.idx`.
 
 ### 4.2 Retrival
-+ Process training data for retriever. Construct hard negatives. The preprocessed data can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/retriever_data).
++ Process training data for retriever. Construct hard negatives. Theraw data and the preprocessed data can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/retriever_data).
     ```bash
     python3 tools/process_retriever_train_data.py --save retriever_data --data-names TRAIN
     ```
