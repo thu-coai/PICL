@@ -139,7 +139,8 @@ class RetrieverDataset(Dataset):
                 "easy_neg_contexts": easy_neg_contexts,
                 "hard_neg_contexts": hard_neg_contexts,
                 "label": line["label"],
-                "neg_labels": line["neg_labels"]
+                "easy_neg_labels": line["easy_neg_labels"],
+                "hard_neg_labels": line["hard_neg_labels"],
             })
             
         return data  

@@ -65,7 +65,7 @@ M H ≤ ℏ c 3 8 π G k B T u {\displaystyle M_{\mathrm {H} }\leq {\frac {\hbar
 </details>
 
 
-<details><summary><b>Question Ansering</b></summary>
+<details><summary><b>Question Answering</b></summary>
 
 ```
 ##########  Query  ##########
