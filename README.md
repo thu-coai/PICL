@@ -150,7 +150,7 @@ which will merge the two pairs into `train_lm_0.bin` and `train_lm_0.idx`.
     ```bash
     python3 tools/process_retriever_train_data.py --save retriever_data --data-names TRAIN
     ```
-+ Train the retriever. The `train.jsonl` and `valid.jsonl` data should be put in `retriever_data/TRAIN/p1_en1_hn1_s42/merge`. The trained retriever can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/results/retriever).
++ Train the retriever. The `train.jsonl` and `valid.jsonl` data should be put in `retriever_data/TRAIN/p1_en1_hn4_s42/merge`. The trained retriever can be downloaded from this [link](https://huggingface.co/t1101675/PICL/tree/main/results/retriever).
     ```bash
     bash scripts/retriever/train.sh ${BASE_PATH}
     ```

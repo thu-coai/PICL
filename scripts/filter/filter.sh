@@ -18,7 +18,7 @@ CKPT_NAME="gpt2-large"
 CKPT="${BASE_PATH}/results/${CKPT_NAME}/"
 # data
 RAW_DATA="100K_128"
-SEARCH_DATA="${RAW_DATA}/TRAIN_p1_en1_hn1_s42_lr5e-05-bs64-G1_4375.pt/L2"
+SEARCH_DATA="${RAW_DATA}/TRAIN_p1_en1_hn4_s42_lr5e-05-bs64-G1_4212.pt/L2"
 DATA_DIR="${BASE_PATH}/pretrain_data/${RAW_DATA}/gpt2"
 IDX_DATA_DIR="${BASE_PATH}/pretrain_data/retrieval_results/${SEARCH_DATA}"
 # hp

@@ -1,5 +1,5 @@
 BASE_PATH=${1}
-DATA_PREFIX=${2-"100K_128_TRAIN_p1_en1_hn1_s42_lr5e-05-bs64-G1_4375.pt_L2/filtered_0.0"}
+DATA_PREFIX=${2-"100K_128_TRAIN_p1_en1_hn4_s42_lr5e-05-bs64-G1_4212.pt_L2/filtered_0.0"}
 DATA_NAME="filtered"
 
 MAX_LENGTH=1024
